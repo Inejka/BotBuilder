@@ -2,11 +2,14 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QFrame, QVBoxLayout, QSplitter
 from ui.BotBuilderWindow import BotBuilderWindow
 from ui.CommandLine import CommandLine
+from PathFile import Paths
+from utils.GetStyleFromFile import get_style
 
 
 class CentralWidget(QSplitter):
     def __init__(self):
         super().__init__()
+        self.setStyleSheet(get_style(Paths.CentralWidget.value))
         self.bot_builder_window = BotBuilderWindow()
         self.command_line = CommandLine()
         self.setOrientation(Qt.Orientation.Vertical)

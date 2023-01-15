@@ -90,6 +90,10 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
 }
 
 QFrame{
-    background-color: #2b2d30;
+    background-color: #1e1f22;
     border: 1px green;
+}
+
+QLabel{
+    color: #72a0b3;
 }

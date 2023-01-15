@@ -1,7 +1,8 @@
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QFrame, QLineEdit, QVBoxLayout, QScrollArea, QLabel, QPushButton
-
+from PathFile import Paths
+from utils.GetStyleFromFile import get_style
 
 
 class CommandLineOutput(QScrollArea):
@@ -17,6 +18,7 @@ class CommandLineOutput(QScrollArea):
         self.inner_widget_layout.alignment = Qt.AlignmentFlag.AlignTop
         self.inner_widget_layout.setAlignment(self.FCKING_KOSTA, Qt.AlignmentFlag.AlignTop)
         self.setWidgetResizable(True)
+        self.setStyleSheet(get_style(Paths.CommandLine.value))
 
     def add_text(self, text):
         label = QLabel(self.inner_widget)
@@ -28,6 +30,7 @@ class CommandLineInput(QLineEdit):
     def __init__(self):
         super().__init__()
         self.commands = {}
+        self.setStyleSheet(get_style(Paths.CommandLineInput.value))
 
     def keyReleaseEvent(self, key_event: QtGui.QKeyEvent) -> None:
         if key_event.key() == Qt.Key.Key_Return.value:

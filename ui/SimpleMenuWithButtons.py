@@ -1,5 +1,7 @@
+from PyQt6 import QtGui
 from PyQt6.QtWidgets import QVBoxLayout, QFrame, QPushButton
-from pyqt6_plugins.examplebuttonplugin import QtGui
+
+
 from utils.GetStyleFromFile import get_style
 from PathFile import Paths
 

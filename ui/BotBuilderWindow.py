@@ -1,9 +1,10 @@
 import math
 
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPainter, QPen, QBrush
 from PyQt6.QtWidgets import QScrollArea
-from pyqt6_plugins.examplebuttonplugin import QtGui
+
 
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 from utils.LinesWrapper import LinesWrapper
@@ -53,9 +54,9 @@ class BotBuilderWindow(QScrollArea):
 
         qp.setPen(pen)
         for from_point, to_point in self.lines:
-            qp.drawLine(from_point[0], from_point[1], to_point[0], to_point[1])
+            qp.drawLine(int(from_point[0]), int(from_point[1]), int(to_point[0]), int(to_point[1]))
             qp.setBrush(QBrush(Qt.GlobalColor.yellow, Qt.BrushStyle.SolidPattern))
-            qp.drawRect(to_point[0] - 10, to_point[1] - 10, 20, 20)
+            qp.drawRect(int(to_point[0] - 10), int(to_point[1] - 10), 20, 20)
 
     def mouseDoubleClickEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         for k, b in self.lines_equations.values():

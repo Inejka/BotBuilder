@@ -9,7 +9,7 @@ class CentralWidget(QSplitter):
         super().__init__()
         self.bot_builder_window = BotBuilderWindow()
         self.command_line = CommandLine()
-        self.setOrientation(Qt.Orientations.Vertical)
+        self.setOrientation(Qt.Orientation.Vertical)
         self.addWidget(self.bot_builder_window)
         self.addWidget(self.command_line)
 

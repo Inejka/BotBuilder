@@ -1,6 +1,7 @@
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QScrollArea, QFrame
-from pyqt6_plugins.examplebuttonplugin import QtGui
+
 from ui.SimpleMenuWithButtons import SimpleMenuWithButtons
 
 
@@ -19,9 +20,9 @@ class SimpleWidgetWithMenu(QFrame):
         if self.menu is not None:
             self.menu.setParent(None)
             self.menu = None
-        if mouse_event.button() == Qt.MouseButtons.RightButton:
+        if mouse_event.button() == Qt.MouseButton.RightButton:
             self.menu = SimpleMenuWithButtons(self, self.names_with_actions)
             self.menu.show()
             mouse_position = mouse_event.scenePosition()
-            self.menu.move(mouse_position.x() + self.menu_offset_x(),
-                           mouse_position.y() + self.menu_offset_y())
+            self.menu.move(int(mouse_position.x() + self.menu_offset_x()),
+                           int(mouse_position.y() + self.menu_offset_y()))

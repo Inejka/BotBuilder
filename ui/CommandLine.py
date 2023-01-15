@@ -1,6 +1,7 @@
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QFrame, QLineEdit, QVBoxLayout, QScrollArea, QLabel, QPushButton
-from pyqt6_plugins.examplebuttonplugin import QtGui
+
 
 
 class CommandLineOutput(QScrollArea):
@@ -13,14 +14,14 @@ class CommandLineOutput(QScrollArea):
         self.inner_widget.setLayout(self.inner_widget_layout)
         self.setWidget(self.inner_widget)
         self.inner_widget_layout.setSpacing(1)
-        self.inner_widget_layout.alignment = Qt.Alignment.AlignTop
-        self.inner_widget_layout.setAlignment(self.FCKING_KOSTA, Qt.Alignment.AlignTop)
+        self.inner_widget_layout.alignment = Qt.AlignmentFlag.AlignTop
+        self.inner_widget_layout.setAlignment(self.FCKING_KOSTA, Qt.AlignmentFlag.AlignTop)
         self.setWidgetResizable(True)
 
     def add_text(self, text):
         label = QLabel(self.inner_widget)
         label.setText(text)
-        self.FCKING_KOSTA.addWidget(label, alignment=Qt.Alignment.AlignVCenter)
+        self.FCKING_KOSTA.addWidget(label, alignment=Qt.AlignmentFlag.AlignVCenter)
 
 
 class CommandLineInput(QLineEdit):

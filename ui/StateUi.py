@@ -1,9 +1,9 @@
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, QEvent
-from PyQt6.uic.properties import QtCore
+from PyQt6.QtGui import QPainter, QPen
 
 from utils.LinesWrapper import LinesWrapper, Line
 from PyQt6.QtWidgets import QFrame, QLineEdit, QVBoxLayout, QWidget
-from pyqt6_plugins.examplebuttonplugin import QtGui
 
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 from utils.StrWrapper import StrWrapper
@@ -46,7 +46,7 @@ class StateUI(SimpleWidgetWithMenu):
         self.state_name.set_str(self.state_name_input.text())
 
     def mousePressEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
-        if mouse_event.button() == Qt.MouseButtons.LeftButton:
+        if mouse_event.button() == Qt.MouseButton.LeftButton:
             self.creating_line = Line(self.update_callback, self.state_id,
                                       mouse_event.scenePosition().x() + self.menu_offset_x(),
                                       mouse_event.scenePosition().y() + self.menu_offset_y(),
@@ -56,7 +56,7 @@ class StateUI(SimpleWidgetWithMenu):
 
     def mouseReleaseEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         super().mouseReleaseEvent(mouse_event)
-        if mouse_event.button() == Qt.MouseButtons.LeftButton:
+        if mouse_event.button() == Qt.MouseButton.LeftButton:
             self.try_create_transit_callback(self.creating_line)
             self.creating_line = None
 
@@ -82,3 +82,11 @@ class StateUI(SimpleWidgetWithMenu):
     def end_move_callback_f(self):
         for i, _ in self.point_with_offset.items():
             self.update_line_callback(i.get_transit_parent_id())
+
+    def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
+        qp = QPainter()
+        qp.begin(self.parent())
+        pen = QPen(Qt.GlobalColor.black, 10, Qt.PenStyle.SolidLine)
+        qp.setPen(pen)
+        qp.drawRect(0, 0, 200, 200)
+        qp.end()

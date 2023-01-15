@@ -1,0 +1,96 @@
+QScrollArea{
+    background = green;
+}
+
+QScrollBar:-webkit-scrollbar-track{
+    background : #2b2d30;
+    width: 10px;
+    height:10px;
+    border: none;
+}
+
+QScrollBar:vertical {
+	border: none;
+	background: rgb(75, 75, 75);
+	width: 14px;
+	margin: 15px 0 15px 0;
+	border-radius: 0px;
+}
+
+        QScrollBar:horizontal {
+            border: none;
+            background: #2b2d30;
+            height: 10px;
+            margin: 0px 0px 0 5px;
+        }
+
+        QScrollBar::handle:horizontal {
+            background: #4d4e51;
+            min-width: 10px;
+        }
+
+        QScrollBar::add-line:horizontal {
+            background: none;
+            width: 26px;
+            subcontrol-position: right;
+            subcontrol-origin: margin;
+
+        }
+
+        QScrollBar::sub-line:horizontal {
+            background: none;
+            width: 26px;
+            subcontrol-position: top left;
+            subcontrol-origin: margin;
+            position: absolute;
+        }
+
+
+
+        QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+            background: none;
+        }
+
+        /* VERTICAL */
+        QScrollBar:vertical {
+            border: none;
+            background: #2b2d30;
+            width: 10px;
+            margin: 26px 0 26px 0;
+        }
+
+        QScrollBar::handle:vertical {
+            background: #4d4e51;
+            min-height: 10px;
+        }
+
+        QScrollBar::add-line:vertical {
+            background: none;
+            height: 26px;
+            subcontrol-position: bottom;
+            subcontrol-origin: margin;
+        }
+
+        QScrollBar::sub-line:vertical {
+            background: none;
+            height: 26px;
+            subcontrol-position: top left;
+            subcontrol-origin: margin;
+            position: absolute;
+        }
+
+        QScrollBar:up-arrow:vertical, QScrollBar::down-arrow:vertical {
+            width: 26px;
+            height: 26px;
+            background: none;
+            image: url('./glass.png');
+        }
+
+        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+            background: none;
+        }
+
+QFrame{
+    background-color: #2b2d30;
+    border: 1px green;
+}

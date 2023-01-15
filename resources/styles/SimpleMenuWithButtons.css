@@ -1,0 +1,10 @@
+QFrame{
+    border: 1px blue;
+    width: fit-content;
+    block-size: fit-content;
+    background-color: grey;
+    }
+
+QPushButton{
+
+    }

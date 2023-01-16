@@ -1,9 +1,11 @@
-from PyQt6.QtWidgets import QApplication, QWidget
-from ui.MainWindow import MainWindow
 import sys
 
+from PyQt6.QtWidgets import QApplication
 
-def initialize_ui() -> MainWindow:
+from ui.MainWindow import MainWindow
+
+
+def initialize_ui():
     app = QApplication(sys.argv)
     temp = MainWindow()
     temp.show()

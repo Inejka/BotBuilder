@@ -7,6 +7,8 @@ def SimpleMovableWidget(cls):
     @KostyaWrapper
     class Wrapper(cls):
         def __init__(self, *args):
+            self.touch_y = None
+            self.touch_x = None
             self.is_moving = False
             self.have_end_move_callback = hasattr(self, "end_move_callback")
 
@@ -31,8 +33,5 @@ def SimpleMovableWidget(cls):
                           int(mouse_event.scenePosition().y() + self.menu_offset_y() - self.touch_y))
                 self.update_callback()
             super().mouseMoveEvent(mouse_event)
-
-        def moveEvent(self, move_event: QtGui.QMoveEvent) -> None:
-            self.moveEvent = super().moveEvent
 
     return Wrapper

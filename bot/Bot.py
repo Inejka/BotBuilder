@@ -13,7 +13,7 @@ class Bot:
         state = State(self.__state_counter)
         self.__states[state.get_id()] = state
         self.__state_counter += 1
-        return state.get_name(), state.get_id(), state.get_associated_file()
+        return state.get_name(), state.get_id()
 
     def create_transit(self, from_state_id: str, to_state_id: str):
         transit = Transit(self.__transit_counter, self.__states[from_state_id], self.__states[to_state_id],

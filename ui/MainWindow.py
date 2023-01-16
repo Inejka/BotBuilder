@@ -8,16 +8,6 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Bot builder app")
-        self.setStyleSheet("""
-        QMainWindow{
-    border: 1px blue;
-    width: fit-content;
-    block-size: fit-content;
-    background-color: grey;
-    color:grey;
-    }
-        """)
-
         self.central_widget = CentralWidget()
         self.setCentralWidget(self.central_widget)
 

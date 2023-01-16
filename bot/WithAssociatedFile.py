@@ -1,8 +1,7 @@
 import os
 
-import PathFile
-from utils.KOSTYAWrapper import KostyaWrapper
 from PathFile import Paths
+from utils.KOSTYAWrapper import KostyaWrapper
 
 
 def WithAssociatedFile(cls):

@@ -15,29 +15,34 @@ from ui.SimpleMovableWidget import SimpleMovableWidget
 @SimpleMovableWidget
 class StateUI(SimpleWidgetWithMenu):
     def __init__(self, parent, state_name, menu_offset_x, menu_offset_y, lines, state_id,
-                 try_create_transit_callback, update_line_callback, file_path):
+                 try_create_transit_callback, update_line_callback, try_open_editor_callback):
         super().__init__([], menu_offset_x, menu_offset_y, parent)
+        self.state_name_input = None
+        self.layout = None
+        self.creating_line = None
         self.menu_offset_x = menu_offset_x
         self.menu_offset_y = menu_offset_y
-        self.creating_line = None
         self.state_id = state_id
+        self.update_line_callback = update_line_callback
+        self.state_name = state_name
+        self.lines = lines
+        self.try_open_editor_callback = try_open_editor_callback
+        self.try_create_transit_callback = try_create_transit_callback
+        self.update_callback = self.lines.update_callback
+        self.point_with_offset = {}
+
+        self.init_ui()
+
+    def init_ui(self):
         self.layout = QVBoxLayout()
         self.state_name_input = QLineEdit()
         self.state_name_input.mouseDoubleClickEvent = self.mouseDoubleClickEvent
-        self.state_name = state_name
-        self.file_path = file_path
         self.layout.addWidget(self.state_name_input)
         self.state_name_input.editingFinished.connect(self.edit_state_name_reaction)
         self.setLayout(self.layout)
         self.state_name_input.setText(self.state_name.get())
         self.setStyleSheet(get_style(Paths.StateUI.value))
         self.show()
-        self.lines = lines
-        self.update_callback = self.lines.update_callback
-        self.point_with_offset = {}
-        self.try_create_transit_callback = try_create_transit_callback
-        self.end_move_callback = self.end_move_callback_f
-        self.update_line_callback = update_line_callback
 
     def get_state_id(self):
         return self.state_id
@@ -74,19 +79,9 @@ class StateUI(SimpleWidgetWithMenu):
         self.point_with_offset[point] = offset
 
     def mouseDoubleClickEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
-        return
-        if mouse_event.button() == Qt.MouseButtons.LeftButton:
-            import os
-            os.system(Paths.IDE.value + self.file_path)
+        if mouse_event.button() == Qt.MouseButton.LeftButton:
+            self.try_open_editor_callback(self.state_id)
 
-    def end_move_callback_f(self):
+    def end_move_callback(self):
         for i, _ in self.point_with_offset.items():
             self.update_line_callback(i.get_transit_parent_id())
-
-    def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
-        qp = QPainter()
-        qp.begin(self.parent())
-        pen = QPen(Qt.GlobalColor.black, 10, Qt.PenStyle.SolidLine)
-        qp.setPen(pen)
-        qp.drawRect(0, 0, 200, 200)
-        qp.end()

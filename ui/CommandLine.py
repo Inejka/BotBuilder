@@ -10,20 +10,17 @@ class CommandLineOutput(QScrollArea):
         super().__init__()
         self.inner_widget = QFrame()
         self.inner_widget_layout = QVBoxLayout()
-        self.FCKING_KOSTA = QVBoxLayout()
-        self.inner_widget_layout.addLayout(self.FCKING_KOSTA)
         self.inner_widget.setLayout(self.inner_widget_layout)
         self.setWidget(self.inner_widget)
         self.inner_widget_layout.setSpacing(1)
-        self.inner_widget_layout.alignment = Qt.AlignmentFlag.AlignTop
-        self.inner_widget_layout.setAlignment(self.FCKING_KOSTA, Qt.AlignmentFlag.AlignTop)
         self.setWidgetResizable(True)
+        self.inner_widget_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.setStyleSheet(get_style(Paths.CommandLine.value))
 
     def add_text(self, text):
         label = QLabel(self.inner_widget)
         label.setText(text)
-        self.FCKING_KOSTA.addWidget(label, alignment=Qt.AlignmentFlag.AlignVCenter)
+        self.inner_widget_layout.addWidget(label)
 
 
 class CommandLineInput(QLineEdit):

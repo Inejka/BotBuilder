@@ -2,7 +2,7 @@ from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QScrollArea, QFrame
 
-from ui.SimpleMenuWithButtons import SimpleMenuWithButtons
+from ui.SimpleDropdownMenu import SimpleDropdownMenu
 
 
 class SimpleWidgetWithMenu(QFrame):
@@ -18,11 +18,14 @@ class SimpleWidgetWithMenu(QFrame):
 
     def mouseReleaseEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         if self.menu is not None:
-            self.menu.setParent(None)
-            self.menu = None
+            self.clear_menu()
         if mouse_event.button() == Qt.MouseButton.RightButton:
-            self.menu = SimpleMenuWithButtons(self, self.names_with_actions)
+            self.menu = SimpleDropdownMenu(self, self.names_with_actions)
             self.menu.show()
             mouse_position = mouse_event.scenePosition()
             self.menu.move(int(mouse_position.x() + self.menu_offset_x()),
                            int(mouse_position.y() + self.menu_offset_y()))
+
+    def clear_menu(self):
+        self.menu.setParent(None)
+        self.menu = None

@@ -1,9 +1,6 @@
 def KostyaWrapper(cls):
     class Wrapper(cls):
         def __init__(self, *args, **kwargs):
-            # super(cls, self).__init__(args, kwargs)
-            # super().__init__(args,kwargs)
-            # return
             if len(args) == 0:
                 super(cls, self).__init__()
             if len(args) == 1:

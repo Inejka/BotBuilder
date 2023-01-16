@@ -1,12 +1,11 @@
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import QVBoxLayout, QFrame, QPushButton
 
-
 from utils.GetStyleFromFile import get_style
 from PathFile import Paths
 
 
-class SimpleMenuWithButtons(QFrame):
+class SimpleDropdownMenu(QFrame):
     def __init__(self, parent, names_with_actions):
         super().__init__(parent)
         self.layout = self.__get_layout()
@@ -27,4 +26,7 @@ class SimpleMenuWithButtons(QFrame):
         return layout
 
     def mousePressEvent(self, mouse_even: QtGui.QMouseEvent) -> None:
+        pass
+
+    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         pass

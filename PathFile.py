@@ -3,7 +3,8 @@ import enum
 
 class Paths(enum.Enum):
     SimpleMenuWithButtons = "resources/styles/SimpleMenuWithButtons.css"
-    StateUI = "resources/styles/StateUi.css"
+    StateUI = "resources/styles/StateUiNormal.css"
+    StateUIStart = "resources/styles/StateUiStart.css"
     BotBuilderWindow = "resources/styles/BotBuilderWindow.css"
     CommandLine = "resources/styles/CommandLine.css"
     CentralWidget = "resources/styles/CentralWidget.css"

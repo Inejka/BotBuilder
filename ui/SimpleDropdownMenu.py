@@ -1,5 +1,6 @@
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import QVBoxLayout, QFrame, QPushButton
+from functools import partial
 
 from utils.GetStyleFromFile import get_style
 from PathFile import Paths
@@ -11,11 +12,19 @@ class SimpleDropdownMenu(QFrame):
         self.layout = self.__get_layout()
         self.setLayout(self.layout)
 
-        for name, action in names_with_actions:
-            button = QPushButton(name)
-            if action is not None:
-                button.clicked.connect(action)
-            self.layout.addWidget(button)
+        if len(names_with_actions[0]) == 3:
+            for name, action, params in names_with_actions:
+                button = QPushButton(name)
+                if action is not None:
+                    button.clicked.connect(partial(action, params))
+                self.layout.addWidget(button)
+
+        if len(names_with_actions[0]) == 2:
+            for name, action in names_with_actions:
+                button = QPushButton(name)
+                if action is not None:
+                    button.clicked.connect(action)
+                self.layout.addWidget(button)
 
         self.setStyleSheet(get_style(Paths.SimpleMenuWithButtons.value))
 

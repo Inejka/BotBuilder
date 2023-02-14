@@ -20,8 +20,9 @@ class SimpleWidgetWithMenu(QFrame):
         if self.menu is not None:
             self.clear_menu()
         if mouse_event.button() == Qt.MouseButton.RightButton:
-            self.menu = SimpleDropdownMenu(self, self.names_with_actions)
+            self.menu = SimpleDropdownMenu(self if self.parent() is None else self.parent(), self.names_with_actions)
             self.menu.show()
+            self.menu.raise_()
             mouse_position = mouse_event.scenePosition()
             self.menu.move(int(mouse_position.x() + self.menu_offset_x()),
                            int(mouse_position.y() + self.menu_offset_y()))

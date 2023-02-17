@@ -16,7 +16,7 @@ from ui.SimpleMovableWidget import SimpleMovableWidget
 class StateUI(SimpleWidgetWithMenu):
     def __init__(self, parent, state_name, menu_offset_x, menu_offset_y, lines, state_id,
                  try_create_transit_callback, update_line_callback, try_open_editor_callback):
-        super().__init__(None, menu_offset_x, menu_offset_y, parent)
+        super().__init__(None, parent)
         self.state_name_input = None
         self.layout = None
         self.creating_line = None

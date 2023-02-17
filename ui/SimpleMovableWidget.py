@@ -1,5 +1,6 @@
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
+
 from utils.KOSTYAWrapper import KostyaWrapper
 
 
@@ -29,8 +30,8 @@ def SimpleMovableWidget(cls):
 
         def mouseMoveEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
             if self.is_moving:
-                self.move(int(mouse_event.scenePosition().x() + self.menu_offset_x() - self.touch_x),
-                          int(mouse_event.scenePosition().y() + self.menu_offset_y() - self.touch_y))
+                self.move(int(mouse_event.scenePosition().x() - self.touch_x),
+                          int(mouse_event.scenePosition().y() - self.touch_y))
                 self.update_callback()
             super().mouseMoveEvent(mouse_event)
 

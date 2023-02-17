@@ -1,32 +1,40 @@
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QScrollArea, QFrame
+from functools import partial
 
-from ui.SimpleDropdownMenu import SimpleDropdownMenu
+from PyQt6.QtWidgets import QFrame, QMenu
+from PathFile import Paths
+from utils.GetStyleFromFile import get_style
 
 
 class SimpleWidgetWithMenu(QFrame):
-    def __init__(self, names_with_actions, menu_offset_x, menu_offset_y, parent=None):
+    def __init__(self, names_with_actions, parent=None):
         super().__init__(parent)
         self.menu = None
+        self.menu_pos = None
         self.names_with_actions = names_with_actions
-        self.menu_offset_x = menu_offset_x
-        self.menu_offset_y = menu_offset_y
+        self.initMenu()
+        self.setStyleSheet(get_style(Paths.SimpleWidgetWithMenu.value))
 
     def set_names_with_actions(self, names_with_actions):
         self.names_with_actions = names_with_actions
+        self.initMenu()
 
-    def mouseReleaseEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
-        if self.menu is not None:
-            self.clear_menu()
-        if mouse_event.button() == Qt.MouseButton.RightButton:
-            self.menu = SimpleDropdownMenu(self if self.parent() is None else self.parent(), self.names_with_actions)
-            self.menu.show()
-            self.menu.raise_()
-            mouse_position = mouse_event.scenePosition()
-            self.menu.move(int(mouse_position.x() + self.menu_offset_x()),
-                           int(mouse_position.y() + self.menu_offset_y()))
+    def initMenu(self):
+        self.menu = QMenu(self)
+        if self.names_with_actions is None or len(self.names_with_actions) == 0:
+            return
+        if len(self.names_with_actions[0]) == 3:
+            for name, action, params in self.names_with_actions:
+                action_menu = self.menu.addAction(name)
+                action_menu.triggered.connect(partial(action, params))
 
-    def clear_menu(self):
-        self.menu.setParent(None)
-        self.menu = None
+        if len(self.names_with_actions[0]) == 2:
+            for name, action in self.names_with_actions:
+                action_menu = self.menu.addAction(name)
+                action_menu.triggered.connect(action)
+
+    def contextMenuEvent(self, event):
+        self.menu_pos = event.pos()
+        self.menu.exec(event.globalPos())
+
+    def get_menu_pos(self):
+        return self.menu_pos

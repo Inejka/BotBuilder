@@ -23,8 +23,7 @@ class BotBuilderWindow(QScrollArea):
     def init_ui(self):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.inner_widget = SimpleWidgetWithMenu([], self.get_x_offset,
-                                                 self.get_y_offset)
+        self.inner_widget = SimpleWidgetWithMenu([])
 
         def set_menu(menu):
             self.inner_widget.menu = menu

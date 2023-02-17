@@ -1,6 +1,6 @@
+from controllers.StateUIColorController import StateUIColorController
 from ui.StateUi import StateUI
 from utils.LinesWrapper import Point, Line
-from controllers.StateUIColorController import StateUIColorController
 
 
 class UIController:
@@ -20,10 +20,8 @@ class UIController:
                            builder.get_lines_wrapper(), state_id, self.try_create_transit,
                            self.update_line_equation_by_transit_id, self.try_open_editor)
         state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui)])
-        state_ui.move(self.MainWindow.get_bot_builder_window().get_inner_widget().get_menu().pos().x(),
-                      self.MainWindow.get_bot_builder_window().get_inner_widget().get_menu().pos().y())
+        state_ui.move(self.MainWindow.get_bot_builder_window().get_inner_widget().get_menu_pos())
         self.state_uis[state_id] = state_ui
-        self.MainWindow.get_bot_builder_window().get_inner_widget().clear_menu()
 
     def try_open_editor(self, id):
         print(id)

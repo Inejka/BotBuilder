@@ -2,7 +2,7 @@ import enum
 
 
 class Paths(enum.Enum):
-    SimpleMenuWithButtons = "resources/styles/SimpleMenuWithButtons.css"
+    SimpleWidgetWithMenu = "resources/styles/SimpleWidgetWithMenu.css"
     StateUI = "resources/styles/StateUiNormal.css"
     StateUIStart = "resources/styles/StateUiStart.css"
     BotBuilderWindow = "resources/styles/BotBuilderWindow.css"

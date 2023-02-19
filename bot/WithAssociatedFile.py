@@ -12,7 +12,7 @@ def WithAssociatedFile(cls):
             self.create_associated_file()
 
         def create_associated_file(self):
-            self.__associated_file_path = os.path.join(Paths.BotGeneratedFolder.value, self.get_id() + '.py')
+            self.__associated_file_path = os.path.join(Paths.BotGeneratedFolder, self.get_id() + '.py')
             with open(self.__associated_file_path, 'w') as file:
                 pass
 

@@ -12,7 +12,7 @@ class SimpleWidgetWithMenu(QFrame):
         self.menu_pos = None
         self.names_with_actions = names_with_actions
         self.initMenu()
-        self.setStyleSheet(get_style(Paths.SimpleWidgetWithMenu.value))
+        self.setStyleSheet(get_style(Paths.SimpleWidgetWithMenu))
 
     def set_names_with_actions(self, names_with_actions):
         self.names_with_actions = names_with_actions

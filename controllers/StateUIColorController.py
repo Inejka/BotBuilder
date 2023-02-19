@@ -10,9 +10,9 @@ class StateUIColorController:
     def __init__(self, bot: Bot, state_uis: Dict):
         self.bot = bot
         self.state_uis = state_uis
-        self.normal_style_css = get_style(Paths.StateUI.value)
-        self.start_style_css = get_style(Paths.StateUIStart.value)
-        self.end_style_css = get_style(Paths.StateUIEnd.value)
+        self.normal_style_css = get_style(Paths.StateUI)
+        self.start_style_css = get_style(Paths.StateUIStart)
+        self.end_style_css = get_style(Paths.StateUIEnd)
 
     def set_start_state(self, state: StateUI):
         previous_state = self.bot.get_start_state()

@@ -1,3 +1,4 @@
+from controllers.MainWindowMenuBarController import MainWindowMenuBarController
 from controllers.StateUIColorController import StateUIColorController
 from ui.StateUi import StateUI
 from utils.LinesWrapper import Point, Line
@@ -10,6 +11,7 @@ class UIController:
         self.bot = bot
         self.MainWindow = MainWindow
         self.stateUIColorController = StateUIColorController(bot, self.state_uis)
+        self.mainWindowMenuBarController = MainWindowMenuBarController(bot, MainWindow, self)
         self.MainWindow.get_bot_builder_window().get_inner_widget().set_names_with_actions(
             [("Create State", self.create_state)])
 
@@ -65,3 +67,11 @@ class UIController:
                     not ignore_id == i.state_id:
                 return i
         return None
+
+    def clear(self):
+        for key, value in self.state_uis.items():
+            value.deleteLater()
+        for key, value in self.transit_uis.items():
+            self.MainWindow.get_bot_builder_window().get_lines_wrapper().remove_line(value)
+        self.state_uis = {}
+        self.transit_uis = {}

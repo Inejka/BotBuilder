@@ -9,7 +9,7 @@ from utils.GetStyleFromFile import get_style
 class CentralWidget(QSplitter):
     def __init__(self):
         super().__init__()
-        self.setStyleSheet(get_style(Paths.CentralWidget.value))
+        self.setStyleSheet(get_style(Paths.CentralWidget))
         self.bot_builder_window = BotBuilderWindow()
         self.command_line = CommandLine()
         self.setOrientation(Qt.Orientation.Vertical)

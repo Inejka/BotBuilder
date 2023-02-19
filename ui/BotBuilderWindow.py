@@ -35,7 +35,7 @@ class BotBuilderWindow(QScrollArea):
         self.inner_widget.setGeometry(0, 0, 10000, 10000)
         self.inner_widget.paintEvent = self.paintEvent
         self.inner_widget.mouseMoveEvent = self.mouseMoveEvent
-        self.setStyleSheet(get_style(Paths.BotBuilderWindow.value))
+        self.setStyleSheet(get_style(Paths.BotBuilderWindow))
 
     def get_lines_wrapper(self) -> LinesWrapper:
         return self.lines

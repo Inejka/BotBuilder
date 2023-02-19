@@ -15,7 +15,7 @@ class CommandLineOutput(QScrollArea):
         self.inner_widget_layout.setSpacing(1)
         self.setWidgetResizable(True)
         self.inner_widget_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.setStyleSheet(get_style(Paths.CommandLine.value))
+        self.setStyleSheet(get_style(Paths.CommandLine))
 
     def add_text(self, text):
         label = QLabel(self.inner_widget)
@@ -27,7 +27,7 @@ class CommandLineInput(QLineEdit):
     def __init__(self):
         super().__init__()
         self.commands = {}
-        self.setStyleSheet(get_style(Paths.CommandLineInput.value))
+        self.setStyleSheet(get_style(Paths.CommandLineInput))
 
     def keyReleaseEvent(self, key_event: QtGui.QKeyEvent) -> None:
         if key_event.key() == Qt.Key.Key_Return.value:

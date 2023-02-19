@@ -1,7 +1,4 @@
-import enum
-
-
-class Paths(enum.Enum):
+class Paths():
     SimpleWidgetWithMenu = "resources/styles/SimpleWidgetWithMenu.css"
     StateUI = "resources/styles/StateUiNormal.css"
     StateUIStart = "resources/styles/StateUiStart.css"
@@ -10,6 +7,6 @@ class Paths(enum.Enum):
     CommandLine = "resources/styles/CommandLine.css"
     CentralWidget = "resources/styles/CentralWidget.css"
     CommandLineInput = "resources/styles/CommandLineInput.css"
+    MainWindowMenuBar = "resources/styles/MainWindowMenuBar.css"
     BotGeneratedFolder = "bot_generated"
     IDE = "C:/Program Files/JetBrains/PyCharm Community Edition 2022.3.1/bin/pycharm64.exe"
-

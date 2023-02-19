@@ -41,7 +41,7 @@ class StateUI(SimpleWidgetWithMenu):
         self.state_name_input.editingFinished.connect(self.edit_state_name_reaction)
         self.setLayout(self.layout)
         self.state_name_input.setText(self.state_name.get())
-        self.setStyleSheet(get_style(Paths.StateUI.value))
+        self.setStyleSheet(get_style(Paths.StateUI))
         self.show()
 
     def get_state_id(self):

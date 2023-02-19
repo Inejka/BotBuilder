@@ -49,3 +49,11 @@ class Bot:
 
     def is_end_state(self, end_state_id: str) -> bool:
         return end_state_id in self.__end_states
+
+    def clear(self):
+        self.__states = {}
+        self.__transits = {}
+        self.__state_counter = 0
+        self.__transit_counter = 0
+        self.__start_state = None
+        self.__end_states = {}

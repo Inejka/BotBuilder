@@ -40,4 +40,12 @@ class Bot:
         return list(self.__end_states.keys())
 
     def remove_end_state(self, end_state_id: str) -> None:
-        del self.__end_states[end_state_id]
+        if end_state_id in self.__end_states:
+            del self.__end_states[end_state_id]
+
+    def clear_start_state(self, start_state_id: str) -> None:
+        if self.__start_state is not None and self.__start_state.get_id() == start_state_id:
+            self.__start_state = None
+
+    def is_end_state(self, end_state_id: str) -> bool:
+        return end_state_id in self.__end_states

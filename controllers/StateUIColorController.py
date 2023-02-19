@@ -12,6 +12,7 @@ class StateUIColorController:
         self.state_uis = state_uis
         self.normal_style_css = get_style(Paths.StateUI.value)
         self.start_style_css = get_style(Paths.StateUIStart.value)
+        self.end_style_css = get_style(Paths.StateUIEnd.value)
 
     def set_start_state(self, state: StateUI):
         previous_state = self.bot.get_start_state()
@@ -19,3 +20,14 @@ class StateUIColorController:
             self.state_uis[previous_state].setStyleSheet(self.normal_style_css)
         self.bot.set_start_state(state.get_state_id())
         state.setStyleSheet(self.start_style_css)
+        self.bot.remove_end_state(state.get_state_id())
+
+    def add_end_state(self, state: StateUI):
+        state.setStyleSheet(self.end_style_css)
+        self.bot.add_end_state(state.get_state_id())
+        self.bot.clear_start_state(state.get_state_id())
+
+    def remove_end_state(self, state: StateUI):
+        if self.bot.is_end_state(state.get_state_id()):
+            self.bot.remove_end_state(state.get_state_id())
+            state.setStyleSheet(self.normal_style_css)

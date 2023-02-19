@@ -14,14 +14,12 @@ from ui.SimpleMovableWidget import SimpleMovableWidget
 
 @SimpleMovableWidget
 class StateUI(SimpleWidgetWithMenu):
-    def __init__(self, parent, state_name, menu_offset_x, menu_offset_y, lines, state_id,
+    def __init__(self, parent, state_name, lines, state_id,
                  try_create_transit_callback, update_line_callback, try_open_editor_callback):
         super().__init__(None, parent)
         self.state_name_input = None
         self.layout = None
         self.creating_line = None
-        self.menu_offset_x = menu_offset_x
-        self.menu_offset_y = menu_offset_y
         self.state_id = state_id
         self.update_line_callback = update_line_callback
         self.state_name = state_name
@@ -53,10 +51,10 @@ class StateUI(SimpleWidgetWithMenu):
     def mousePressEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         if mouse_event.button() == Qt.MouseButton.LeftButton:
             self.creating_line = Line(self.update_callback, self.state_id,
-                                      mouse_event.scenePosition().x() + self.menu_offset_x(),
-                                      mouse_event.scenePosition().y() + self.menu_offset_y(),
-                                      mouse_event.scenePosition().x() + self.menu_offset_x(),
-                                      mouse_event.scenePosition().y() + self.menu_offset_y())
+                                      self.mapToParent(mouse_event.pos()).x(),
+                                      self.mapToParent(mouse_event.pos()).y(),
+                                      self.mapToParent(mouse_event.pos()).x(),
+                                      self.mapToParent(mouse_event.pos()).y())
             self.lines.add_line(self.creating_line)
 
     def mouseReleaseEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
@@ -67,8 +65,8 @@ class StateUI(SimpleWidgetWithMenu):
 
     def mouseMoveEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         if not self.creating_line is None:
-            self.creating_line[1][0] = mouse_event.scenePosition().x() + self.menu_offset_x()
-            self.creating_line[1][1] = mouse_event.scenePosition().y() + self.menu_offset_y()
+            self.creating_line[1][0] = self.mapToParent(mouse_event.pos()).x()
+            self.creating_line[1][1] = self.mapToParent(mouse_event.pos()).y()
 
     def moveEvent(self, move_event: QtGui.QMoveEvent) -> None:
         for i, j in self.point_with_offset.items():

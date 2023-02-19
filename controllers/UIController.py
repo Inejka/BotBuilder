@@ -18,9 +18,8 @@ class UIController:
     def create_state(self):
         state_name, state_id = self.bot.create_state()
         builder = self.MainWindow.get_bot_builder_window()
-        state_ui = StateUI(builder.get_inner_widget(), state_name, builder.get_x_offset, builder.get_y_offset,
-                           builder.get_lines_wrapper(), state_id, self.try_create_transit,
-                           self.update_line_equation_by_transit_id, self.try_open_editor)
+        state_ui = StateUI(builder.get_inner_widget(), state_name, builder.get_lines_wrapper(), state_id,
+                           self.try_create_transit, self.update_line_equation_by_transit_id, self.try_open_editor)
         state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
                                          ("Add end", self.stateUIColorController.add_end_state, state_ui),
                                          ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])

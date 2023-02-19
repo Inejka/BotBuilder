@@ -40,12 +40,6 @@ class BotBuilderWindow(QScrollArea):
     def get_lines_wrapper(self) -> LinesWrapper:
         return self.lines
 
-    def get_x_offset(self):
-        return self.horizontalScrollBar().value()
-
-    def get_y_offset(self):
-        return self.verticalScrollBar().value()
-
     def set_menu_names_with_actions(self, names_with_actions):
         self.inner_widget.set_names_with_actions(names_with_actions)
 

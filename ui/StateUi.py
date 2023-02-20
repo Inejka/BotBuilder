@@ -1,17 +1,14 @@
 import json
 
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QEvent
-from PyQt6.QtGui import QPainter, QPen
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QLineEdit, QVBoxLayout
 
-from utils.LinesWrapper import LinesWrapper, Line, Point
-from PyQt6.QtWidgets import QFrame, QLineEdit, QVBoxLayout, QWidget
-
-from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
-from utils.StrWrapper import StrWrapper
-from utils.GetStyleFromFile import get_style
 from PathFile import Paths
 from ui.SimpleMovableWidget import SimpleMovableWidget
+from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
+from utils.GetStyleFromFile import get_style
+from utils.LinesWrapper import Line, Point
 
 
 @SimpleMovableWidget

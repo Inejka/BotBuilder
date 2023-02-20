@@ -1,7 +1,7 @@
 from bot.Bot import Bot
+from controllers.CommandLineController import CommandLineController
 from controllers.UIController import UIController
 from ui.UiInitializer import initialize_ui
-from controllers.CommandLineController import CommandLineController
 
 
 class MainController:

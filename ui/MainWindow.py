@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QMainWindow
+
 from ui.BotBuilderWindow import BotBuilderWindow
 from ui.CentralWidget import CentralWidget
 

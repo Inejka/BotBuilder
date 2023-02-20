@@ -1,6 +1,7 @@
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFrame, QLineEdit, QVBoxLayout, QScrollArea, QLabel, QPushButton
+from PyQt6.QtWidgets import QFrame, QLineEdit, QVBoxLayout, QScrollArea, QLabel
+
 from PathFile import Paths
 from utils.GetStyleFromFile import get_style
 

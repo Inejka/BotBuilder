@@ -1,7 +1,7 @@
 import json
 
-from utils.StrWrapper import StrWrapper
 from bot.WithAssociatedFile import WithAssociatedFile
+from utils.StrWrapper import StrWrapper
 
 
 @WithAssociatedFile

@@ -1,8 +1,9 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFrame, QVBoxLayout, QSplitter
+from PyQt6.QtWidgets import QSplitter
+
+from PathFile import Paths
 from ui.BotBuilderWindow import BotBuilderWindow
 from ui.CommandLine import CommandLine
-from PathFile import Paths
 from utils.GetStyleFromFile import get_style
 
 

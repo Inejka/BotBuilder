@@ -1,8 +1,8 @@
 from typing import Dict
 
-from ui.StateUi import StateUI
-from bot.Bot import Bot
 from PathFile import Paths
+from bot.Bot import Bot
+from ui.StateUi import StateUI
 from utils.GetStyleFromFile import get_style
 
 

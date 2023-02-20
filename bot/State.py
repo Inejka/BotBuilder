@@ -1,9 +1,8 @@
 import json
 
-from utils.StrWrapper import StrWrapper
 from bot.Transit import Transit
 from bot.WithAssociatedFile import WithAssociatedFile
-import os
+from utils.StrWrapper import StrWrapper
 
 
 @WithAssociatedFile

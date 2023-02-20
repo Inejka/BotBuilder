@@ -1,11 +1,12 @@
+import os
+
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QFileDialog
 
+from PathFile import Paths
 from bot.Bot import Bot
 from ui.MainWindow import MainWindow
-from PathFile import Paths
 from utils.GetStyleFromFile import get_style
-import os
 
 
 class MainWindowMenuBarController:

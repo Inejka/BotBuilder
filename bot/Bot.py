@@ -1,9 +1,10 @@
-from typing import List
 import json
+import os
+from typing import List
+
+from PathFile import Paths
 from bot.State import State
 from bot.Transit import Transit
-from PathFile import Paths
-import os
 
 
 class Bot:

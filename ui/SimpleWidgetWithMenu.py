@@ -1,6 +1,7 @@
 from functools import partial
 
 from PyQt6.QtWidgets import QFrame, QMenu
+
 from PathFile import Paths
 from utils.GetStyleFromFile import get_style
 

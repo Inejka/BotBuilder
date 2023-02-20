@@ -5,10 +5,10 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPainter, QPen, QBrush
 from PyQt6.QtWidgets import QScrollArea
 
-from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
-from utils.LinesWrapper import LinesWrapper
 from PathFile import Paths
+from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 from utils.GetStyleFromFile import get_style
+from utils.LinesWrapper import LinesWrapper
 
 
 class BotBuilderWindow(QScrollArea):

@@ -1,7 +1,9 @@
 from typing import List
-
+import json
 from bot.State import State
 from bot.Transit import Transit
+from PathFile import Paths
+import os
 
 
 class Bot:
@@ -57,3 +59,21 @@ class Bot:
         self.__transit_counter = 0
         self.__start_state = None
         self.__end_states = {}
+
+    def save(self):
+        with open(os.path.join(Paths.BotGeneratedFolder, "bot.json"), 'w') as file:
+            json.dump(self, file, default=Bot.to_json, indent=4)
+
+    def to_json(self):
+        # json loads for bot serialization for not to return a str
+        # todo find way to remove json loads
+        to_return = "{"
+        to_return += '"states":' + (json.dumps(self.__states, default=State.to_json))
+        to_return += ',"transits":' + (json.dumps(self.__transits, default=Transit.to_json))
+        to_return += ',"state_counter":' + str(self.__state_counter)
+        to_return += ',"transit_counter":' + str(self.__transit_counter)
+        to_return += ',"start_state":"' + (
+            self.__start_state.get_id() if self.__start_state is not None else "None") + '"'
+        to_return += ',"end_states":' + json.dumps(self.__end_states, default=State.get_id)
+        to_return += "}"
+        return json.loads(to_return)

@@ -1,8 +1,10 @@
+import json
+
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, QEvent
 from PyQt6.QtGui import QPainter, QPen
 
-from utils.LinesWrapper import LinesWrapper, Line
+from utils.LinesWrapper import LinesWrapper, Line, Point
 from PyQt6.QtWidgets import QFrame, QLineEdit, QVBoxLayout, QWidget
 
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
@@ -83,3 +85,15 @@ class StateUI(SimpleWidgetWithMenu):
     def end_move_callback(self):
         for i, _ in self.point_with_offset.items():
             self.update_line_callback(i.get_transit_parent_id())
+
+    def to_json(self):
+        # json loads for bot serialization for not to return a str
+        # todo find way to remove json loads
+        to_return = "{"
+        to_return += '"state_id":"' + self.state_id + '"'
+        to_return += ',"pos_x":' + str(self.pos().x())
+        to_return += ',"pos_y":' + str(self.pos().y())
+        temp = [{"point": f, "offset": t} for f, t in self.point_with_offset.items()]
+        to_return += ',"point_with_offset":' + json.dumps(temp, default=Point.to_json)
+        to_return += "}"
+        return json.loads(to_return)

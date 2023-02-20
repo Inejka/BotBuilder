@@ -1,3 +1,7 @@
+import json
+import os
+
+from PathFile import Paths
 from controllers.MainWindowMenuBarController import MainWindowMenuBarController
 from controllers.StateUIColorController import StateUIColorController
 from ui.StateUi import StateUI
@@ -74,3 +78,16 @@ class UIController:
             self.MainWindow.get_bot_builder_window().get_lines_wrapper().remove_line(value)
         self.state_uis = {}
         self.transit_uis = {}
+
+    def save(self):
+        with open(os.path.join(Paths.BotGeneratedFolder, "bot_ui.json"), 'w') as file:
+            json.dump(self, file, default=UIController.to_json, indent=4)
+
+    def to_json(self):
+        # json loads for bot serialization for not to return a str
+        # todo find way to remove json loads
+        to_return = '{'
+        to_return += '"state_uis":' + json.dumps(self.state_uis, default=StateUI.to_json)
+        to_return += ',"transit_uis":' + json.dumps(self.transit_uis, default=Line.to_json)
+        to_return += '}'
+        return json.loads(to_return)

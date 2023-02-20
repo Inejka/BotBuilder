@@ -26,7 +26,12 @@ class MainWindowMenuBarController:
         clearAction = QAction("Clear", self.mainWindow)
         clearAction.triggered.connect(self.clear)
 
+        saveAction = QAction("Save", self.mainWindow)
+        saveAction.triggered.connect(self.save)
+        saveAction.setShortcut("Ctrl+s")
+
         fileMenu.addAction(selectFolderAction)
+        fileMenu.addAction(saveAction)
         fileMenu.addAction(clearAction)
 
     def clear(self):
@@ -39,3 +44,7 @@ class MainWindowMenuBarController:
         if file:
             self.clear()
             Paths.BotGeneratedFolder = file
+
+    def save(self):
+        self.bot.save()
+        self.uiController.save()

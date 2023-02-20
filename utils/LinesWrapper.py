@@ -1,3 +1,6 @@
+import json
+
+
 class Point:
     def __init__(self, update_callback, x, y):
         self.container = [x, y]
@@ -22,6 +25,13 @@ class Point:
     def __setitem__(self, key, value):
         self.update_callback()
         self.container[key] = value
+
+    def to_json(self):
+        to_return = '{'
+        to_return += '"x":' + str(self.container[0])
+        to_return += ',"y":' + str(self.container[1])
+        to_return += '}'
+        return json.loads(to_return)
 
 
 class Line:
@@ -50,6 +60,19 @@ class Line:
 
     def __setitem__(self, key, value):
         self.container[key] = value
+
+    def to_json(self):
+        # json loads for bot serialization for not to return a str
+        # todo find way to remove json loads
+        # todo move to normal transit ui
+        to_return = "{"
+        to_return += '"transit_id":"' + self.transit_id + '"'
+        to_return += ',"from_x":' + str(self.container[0].container[0])
+        to_return += ',"from_y":' + str(self.container[0].container[1])
+        to_return += ',"to_x":' + str(self.container[1].container[0])
+        to_return += ',"to_y":' + str(self.container[1].container[1])
+        to_return += "}"
+        return json.loads(to_return)
 
 
 class LinesWrapper:

@@ -91,8 +91,8 @@ class StateUI(QFrame):
         # todo find way to remove json loads
         to_return = "{"
         to_return += '"state_id":"' + self.state_id + '"'
-        to_return += ',"pos_x":' + str(self.pos().x())
-        to_return += ',"pos_y":' + str(self.pos().y())
+        to_return += ',"pos_x":' + str(self.scene_control_proxy.pos().x())
+        to_return += ',"pos_y":' + str(self.scene_control_proxy.pos().y())
         temp = [{"point": f, "offset": t} for f, t in self.point_with_offset.items()]
         to_return += ',"point_with_offset":' + json.dumps(temp, default=Point.to_json)
         to_return += "}"

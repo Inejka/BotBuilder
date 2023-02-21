@@ -18,18 +18,22 @@ class UIController:
         self.MainWindow = MainWindow
         self.stateUIColorController = StateUIColorController(bot, self.state_uis)
         self.mainWindowMenuBarController = MainWindowMenuBarController(bot, MainWindow, self)
-        self.MainWindow.get_bot_builder_window().get_inner_widget().set_names_with_actions(
-            [("Create State", self.create_state)])
+        self.MainWindow.get_bot_builder_window().set_names_with_actions([("Create State", self.create_state)])
+        self.MainWindow.setGeometry(100, 100, 500, 500)
 
     def create_state(self):
         state_name, state_id = self.bot.create_state()
         builder = self.MainWindow.get_bot_builder_window()
-        state_ui = StateUI(builder.get_inner_widget(), state_name, builder.get_lines_wrapper(), state_id,
-                           self.try_create_transit, self.update_line_equation_by_transit_id, self.try_open_editor)
+        self.initialize_state(builder, state_id, state_name, builder.get_menu_pos())
+
+    def initialize_state(self, builder, state_id, state_name, point):
+        state_ui = StateUI(state_name, builder.get_lines_wrapper(), state_id, self.try_create_transit,
+                           self.update_line_equation_by_transit_id, self.try_open_editor)
         state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
                                          ("Add end", self.stateUIColorController.add_end_state, state_ui),
                                          ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])
-        state_ui.move(self.MainWindow.get_bot_builder_window().get_inner_widget().get_menu_pos())
+        state_ui.move(point)
+        builder.add_widget(state_ui)
         self.state_uis[state_id] = state_ui
 
     def try_open_editor(self, id):
@@ -111,14 +115,9 @@ class UIController:
 
     def load_state(self, load_from):
         builder = self.MainWindow.get_bot_builder_window()
-        state_ui = StateUI(builder.get_inner_widget(), self.bot.get_name_wrapper_by_state_id(load_from["state_id"]),
-                           builder.get_lines_wrapper(), load_from["state_id"], self.try_create_transit,
-                           self.update_line_equation_by_transit_id, self.try_open_editor)
-        state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
-                                         ("Add end", self.stateUIColorController.add_end_state, state_ui),
-                                         ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])
-        state_ui.move(QPoint(load_from["pos_x"], load_from["pos_y"]))
-        self.state_uis[load_from["state_id"]] = state_ui
+        self.initialize_state(builder, load_from["state_id"],
+                              self.bot.get_name_wrapper_by_state_id(load_from["state_id"]),
+                              QPoint(load_from["pos_x"], load_from["pos_y"]))
 
     def load_transit(self, load_from, state_uis_reference):
         builder = self.MainWindow.get_bot_builder_window()

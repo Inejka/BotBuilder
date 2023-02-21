@@ -2,20 +2,21 @@ import json
 
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QLineEdit, QVBoxLayout
+from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame
 
 from PathFile import Paths
 from ui.SimpleMovableWidget import SimpleMovableWidget
-from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
+from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu, SimpleWidgetWithMenuWr
 from utils.GetStyleFromFile import get_style
 from utils.LinesWrapper import Line, Point
 
 
 @SimpleMovableWidget
-class StateUI(SimpleWidgetWithMenu):
-    def __init__(self, parent, state_name, lines, state_id,
+@SimpleWidgetWithMenuWr
+class StateUI(QFrame):
+    def __init__(self,state_name, lines, state_id,
                  try_create_transit_callback, update_line_callback, try_open_editor_callback):
-        super().__init__(None, parent)
+        super().__init__()
         self.state_name_input = None
         self.layout = None
         self.creating_line = None
@@ -39,7 +40,6 @@ class StateUI(SimpleWidgetWithMenu):
         self.setLayout(self.layout)
         self.state_name_input.setText(self.state_name.get())
         self.setStyleSheet(get_style(Paths.StateUI))
-        self.show()
 
     def get_state_id(self):
         return self.state_id
@@ -57,6 +57,8 @@ class StateUI(SimpleWidgetWithMenu):
             self.lines.add_line(self.creating_line)
 
     def mouseReleaseEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
+        #todo fix right click and creating line bug
+        #todo fix move state over screen
         super().mouseReleaseEvent(mouse_event)
         if mouse_event.button() == Qt.MouseButton.LeftButton:
             self.try_create_transit_callback(self.creating_line)

@@ -3,66 +3,72 @@ import math
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPainter, QPen, QBrush
-from PyQt6.QtWidgets import QScrollArea
+from PyQt6.QtWidgets import QScrollArea, QGraphicsScene, QGraphicsView, QGraphicsRectItem, QGraphicsItem
 
 from PathFile import Paths
-from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
+from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenuWr, SimpleWidgetWithMenu
 from utils.GetStyleFromFile import get_style
 from utils.LinesWrapper import LinesWrapper
 
 
-class BotBuilderWindow(QScrollArea):
+@SimpleWidgetWithMenuWr
+class BotBuilderWindow(QGraphicsView):
+    # todo implement movement by left click or middle button
+    # todo implement auto resize
+    # todo implement area selection and movement
     def __init__(self):
         super().__init__()
-        self.inner_widget = None
         self.init_ui()
-        self.lines = LinesWrapper(self.inner_widget.update)
+        self.lines = LinesWrapper(self.update)
         self.transit_thickness = 5
         self.lines_equations = {}
+        self.scene_s = QGraphicsScene()
+        self.setScene(self.scene_s)
+
+        rect = QGraphicsRectItem(0, 0, 200, 50)
+        rect.setPos(50, 20)
+        brush = QBrush(Qt.GlobalColor.red)
+        rect.setBrush(brush)
+
+        # Define the pen (line)
+        pen = QPen(Qt.GlobalColor.cyan)
+        pen.setWidth(10)
+        rect.setPen(pen)
+        self.scene_s.addItem(rect)
+        for item in self.scene_s.items():
+            item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
+            item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
 
     def init_ui(self):
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.inner_widget = SimpleWidgetWithMenu([])
-
-        def set_menu(menu):
-            self.inner_widget.menu = menu
-
-        self.inner_widget.set_menu = set_menu
-        self.inner_widget.get_menu = lambda: self.inner_widget.menu
-
-        self.setWidget(self.inner_widget)
-        self.inner_widget.setGeometry(0, 0, 10000, 10000)
-        self.inner_widget.paintEvent = self.paintEvent
-        self.inner_widget.mouseMoveEvent = self.mouseMoveEvent
         self.setStyleSheet(get_style(Paths.BotBuilderWindow))
+
+    def add_item(self, item):
+        self.scene().addItem(item)
+
+    def add_widget(self, widget):
+        self.scene().addWidget(widget)
 
     def get_lines_wrapper(self) -> LinesWrapper:
         return self.lines
 
-    def set_menu_names_with_actions(self, names_with_actions):
-        self.inner_widget.set_names_with_actions(names_with_actions)
+    # def paintEvent(self, e):
+    #     qp = QPainter()
+    #     qp.begin(self)
+    #     self.draw_lines(qp)
+    #     #todo create transit_ui widget and move paint logit to it
+    #     qp.end()
+    #
+    # def draw_lines(self, qp):
+    #     pen = QPen(Qt.GlobalColor.black, self.transit_thickness, Qt.PenStyle.SolidLine)
+    #
+    #     qp.setPen(pen)
+    #     for from_point, to_point in self.lines:
+    #         qp.drawLine(int(from_point[0]), int(from_point[1]), int(to_point[0]), int(to_point[1]))
+    #         qp.setBrush(QBrush(Qt.GlobalColor.yellow, Qt.BrushStyle.SolidPattern))
+    #         qp.drawRect(int(to_point[0] - 10), int(to_point[1] - 10), 20, 20)
 
-    def get_inner_widget(self) -> SimpleWidgetWithMenu:
-        return self.inner_widget
-
-    def paintEvent(self, e):
-        qp = QPainter()
-        qp.begin(self.inner_widget)
-        self.draw_lines(qp)
-        qp.end()
-
-    def draw_lines(self, qp):
-        pen = QPen(Qt.GlobalColor.black, self.transit_thickness, Qt.PenStyle.SolidLine)
-
-        qp.setPen(pen)
-        for from_point, to_point in self.lines:
-            qp.drawLine(int(from_point[0]), int(from_point[1]), int(to_point[0]), int(to_point[1]))
-            qp.setBrush(QBrush(Qt.GlobalColor.yellow, Qt.BrushStyle.SolidPattern))
-            qp.drawRect(int(to_point[0] - 10), int(to_point[1] - 10), 20, 20)
-
-    def mouseDoubleClickEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
-        for k, b in self.lines_equations.values():
-            if math.fabs((
-                                 mouse_event.scenePosition().y() - b) / k - mouse_event.scenePosition().x()) < self.transit_thickness:
-                print("DD")
+    # def mouseDoubleClickEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
+    #     for k, b in self.lines_equations.values():
+    #         if math.fabs((
+    #                              mouse_event.scenePosition().y() - b) / k - mouse_event.scenePosition().x()) < self.transit_thickness:
+    #             print("DD")

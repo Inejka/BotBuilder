@@ -114,7 +114,7 @@ class Bot:
         self.__states[load_from["from_state"]].add_transit(transit)
 
     def load_start_end_states(self, start_state_id, end_states):
-        self.__start_state = self.__states[start_state_id]
+        self.__start_state = self.__states[start_state_id] if not start_state_id == "None" else None
         for _, i in end_states.items():
             self.__end_states[i] = self.__states[i]
 

@@ -73,7 +73,6 @@ class UIController:
         self.transit_uis.clear()
 
     def save(self):
-        # todo fix state save
         with open(os.path.join(Paths.BotGeneratedFolder, "bot_ui.json"), 'w') as file:
             json.dump(self, file, default=UIController.to_json, indent=4)
 

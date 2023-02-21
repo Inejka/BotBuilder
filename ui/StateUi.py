@@ -16,6 +16,7 @@ class StateUI(QFrame):
     def __init__(self,state_name, lines, state_id,
                  try_create_transit_callback, update_line_callback, try_open_editor_callback):
         super().__init__()
+        #todo fix menu
         self.state_name_input = None
         self.layout = None
         self.creating_line = None

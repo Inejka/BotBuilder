@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import QGraphicsItem
 
 from PathFile import Paths
 from controllers.MainWindowMenuBarController import MainWindowMenuBarController
-from controllers.StateUIColorController import StateUIColorController
+from controllers.StateUIController import StateUIController
 from ui.StateUi import StateUI
 from utils.LinesWrapper import Point, Line
 
@@ -18,35 +18,12 @@ class UIController:
         self.transit_uis = {}
         self.bot = bot
         self.MainWindow = MainWindow
-        self.stateUIColorController = StateUIColorController(bot, self.state_uis)
+        self.state_uis_controller = StateUIController(bot, self.state_uis, MainWindow, self.try_create_transit,
+                                                      self.update_line_equation_by_transit_id, self.try_open_editor)
         self.mainWindowMenuBarController = MainWindowMenuBarController(bot, MainWindow, self)
-        self.MainWindow.get_bot_builder_window().set_names_with_actions([("Create State", self.create_state)])
+        self.MainWindow.get_bot_builder_window().set_names_with_actions(
+            [("Create State", self.state_uis_controller.create_state)])
         self.MainWindow.setGeometry(100, 100, 500, 500)
-
-    def create_state(self):
-        state_name, state_id = self.bot.create_state()
-        builder = self.MainWindow.get_bot_builder_window()
-        self.initialize_state(builder, state_id, state_name, builder.get_menu_pos())
-
-    def initialize_state(self, builder, state_id, state_name, point):
-        state_ui = StateUI(state_name, builder.get_lines_wrapper(), state_id, self.try_create_transit,
-                           self.update_line_equation_by_transit_id, self.try_open_editor)
-        state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
-                                         ("Add end", self.stateUIColorController.add_end_state, state_ui),
-                                         ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])
-        self.create_control_proxy_and_bind(builder, point, state_ui)
-        self.state_uis[state_id] = state_ui
-
-    def create_control_proxy_and_bind(self, builder, point, state_ui):
-        proxy = builder.add_widget(state_ui)
-        proxy.setPos(point)
-        proxyControl = builder.scene().addRect(0, 0, state_ui.width(), 20, QPen(Qt.GlobalColor.black),
-                                               QBrush(Qt.GlobalColor.darkGreen))
-        proxyControl.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
-        proxyControl.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
-        proxy.setParentItem(proxyControl)
-        proxy.setPos(0, proxyControl.rect().height())
-        proxyControl.setPos(point)
 
     def try_open_editor(self, id):
         print(id)
@@ -90,15 +67,14 @@ class UIController:
         return None
 
     def clear(self):
-        for key, value in self.state_uis.items():
-            value.deleteLater()
+        # todo fix clear
+        self.state_uis_controller.clear()
         for key, value in self.transit_uis.items():
             self.MainWindow.get_bot_builder_window().get_lines_wrapper().remove_line(value)
-        self.state_uis = {}
-        self.transit_uis = {}
-        self.stateUIColorController.state_uis = self.state_uis
+        self.transit_uis.clear()
 
     def save(self):
+        # todo fix state save
         with open(os.path.join(Paths.BotGeneratedFolder, "bot_ui.json"), 'w') as file:
             json.dump(self, file, default=UIController.to_json, indent=4)
 
@@ -120,16 +96,10 @@ class UIController:
         # bot_ui -> states from dict to list????????????
         # bot_ui -> transit_uis from dict to list
         for _, i in parsed_json["state_uis"].items():
-            self.load_state(i)
+            self.state_uis_controller.load_state(i)
         for _, i in parsed_json["transit_uis"].items():
             self.load_transit(i, parsed_json["state_uis"])
-        self.paint_end_start_states()
-
-    def load_state(self, load_from):
-        builder = self.MainWindow.get_bot_builder_window()
-        self.initialize_state(builder, load_from["state_id"],
-                              self.bot.get_name_wrapper_by_state_id(load_from["state_id"]),
-                              QPointF(load_from["pos_x"], load_from["pos_y"]))
+        self.state_uis_controller.paint_end_start_states()
 
     def load_transit(self, load_from, state_uis_reference):
         builder = self.MainWindow.get_bot_builder_window()
@@ -154,9 +124,3 @@ class UIController:
         for i in state_info["point_with_offset"]:
             if i["point"]["x"] == x and i["point"]["y"] == y:
                 return Point(line_update_callback, i["offset"]["x"], i["offset"]["y"])
-
-    def paint_end_start_states(self):
-        if self.bot.get_start_state() is not None:
-            self.stateUIColorController.paint_start_state(self.state_uis[self.bot.get_start_state()])
-        for i in self.bot.get_end_states():
-            self.stateUIColorController.paint_end_state(self.state_uis[i])

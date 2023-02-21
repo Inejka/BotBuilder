@@ -10,13 +10,14 @@ from utils.GetStyleFromFile import get_style
 from utils.LinesWrapper import Line, Point
 
 
-
 @SimpleWidgetWithMenu
 class StateUI(QFrame):
-    def __init__(self,state_name, lines, state_id,
+    def __init__(self, state_name, lines, state_id,
                  try_create_transit_callback, update_line_callback, try_open_editor_callback):
         super().__init__()
-        #todo fix menu
+        # todo fix menu
+        self.scene_control_proxy = None
+        self.scene_proxy = None
         self.state_name_input = None
         self.layout = None
         self.creating_line = None
@@ -55,9 +56,10 @@ class StateUI(QFrame):
                                       self.mapToParent(mouse_event.pos()).x(),
                                       self.mapToParent(mouse_event.pos()).y())
             self.lines.add_line(self.creating_line)
+
     def mouseReleaseEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
-        #todo fix right click and creating line bug
-        #todo fix move state over screen
+        # todo fix right click and creating line bug
+        # todo fix move state over screen
         super().mouseReleaseEvent(mouse_event)
         if mouse_event.button() == Qt.MouseButton.LeftButton:
             self.try_create_transit_callback(self.creating_line)
@@ -95,3 +97,13 @@ class StateUI(QFrame):
         to_return += ',"point_with_offset":' + json.dumps(temp, default=Point.to_json)
         to_return += "}"
         return json.loads(to_return)
+
+    def bind_proxies(self, control_proxy, proxy):
+        self.scene_control_proxy = control_proxy
+        self.scene_proxy = proxy
+
+    def get_control_proxy(self):
+        return self.scene_control_proxy
+
+    def get_proxy(self):
+        return self.scene_proxy

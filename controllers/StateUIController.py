@@ -41,6 +41,7 @@ class StateUIController:
         proxy.setParentItem(proxyControl)
         proxy.setPos(0, proxyControl.rect().height())
         proxyControl.setPos(point)
+        state_ui.bind_proxies(proxyControl, proxy)
 
     def load_state(self, load_from):
         builder = self.mainWindow.get_bot_builder_window()

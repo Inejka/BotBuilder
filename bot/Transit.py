@@ -13,6 +13,12 @@ class Transit:
         self.__from_state = from_state
         self.__priority = priority
 
+    def set_name(self, name: str) -> None:
+        self.__name.set_str(name)
+
+    def set_id(self, id: str) -> None:
+        self.__inner_id = id
+
     def get_id(self):
         return self.__inner_id
 
@@ -24,4 +30,10 @@ class Transit:
         # todo find way to remove json loads
         return json.loads('{"inner_id":"' + self.__inner_id + '","name":"' + self.__name.get() + '","to_state":"' \
                           + self.__to_state.get_id() + '","from_state":"' + self.__from_state.get_id() + '","priority":' + str(
-            self.__priority) + ',"associated_file_path":"' + self.get_associated_file() + '"}')
+            self.__priority) + ',"associated_file_path":"' + self.get_associated_file().replace("\\", "\\\\") + '"}')
+
+    def get_from_state_id(self) -> str:
+        return self.__from_state.get_id()
+
+    def get_to_state_id(self) -> str:
+        return self.__to_state.get_id()

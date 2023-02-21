@@ -24,8 +24,16 @@ class State:
     def add_transit(self, transit: Transit):
         self.__transits.append(transit)
 
+    def set_name(self, name: str) -> None:
+        self.__name.set_str(name)
+
+    def set_id(self, id: str) -> None:
+        self.__id = id
+
     def to_json(self):
-        #json loads for bot serialization for not to return a str
+        # json loads for bot serialization for not to return a str
         # todo find way to remove json loads
         transits = [f.get_name().get() for f in self.__transits]
-        return json.loads('{"id":"' + self.__id + '","name":"' + self.__name.get() + '","transits":' + str(transits).replace("'",'"') + '}')
+        return json.loads(
+            '{"id":"' + self.__id + '","name":"' + self.__name.get() + '","transits":' +
+            str(transits).replace("'", '"') + ',"associated_file_path":"' + self.get_associated_file().replace("\\", "\\\\") + '"}')

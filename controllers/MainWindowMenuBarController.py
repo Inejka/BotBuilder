@@ -31,8 +31,13 @@ class MainWindowMenuBarController:
         saveAction.triggered.connect(self.save)
         saveAction.setShortcut("Ctrl+s")
 
+        loadAction = QAction("Load", self.mainWindow)
+        loadAction.triggered.connect(self.load)
+        loadAction.setShortcut("Ctrl+o")
+
         fileMenu.addAction(selectFolderAction)
         fileMenu.addAction(saveAction)
+        fileMenu.addAction(loadAction)
         fileMenu.addAction(clearAction)
 
     def clear(self):
@@ -43,9 +48,14 @@ class MainWindowMenuBarController:
         file = QFileDialog.getExistingDirectory(self.mainWindow, "Select Directory",
                                                 os.path.abspath(Paths.BotGeneratedFolder))
         if file:
-            self.clear()
+            # self.clear()
             Paths.BotGeneratedFolder = file
 
     def save(self):
         self.bot.save()
         self.uiController.save()
+
+    def load(self):
+        self.clear()
+        self.bot.load()
+        self.uiController.load()

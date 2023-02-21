@@ -31,3 +31,9 @@ class StateUIColorController:
         if self.bot.is_end_state(state.get_state_id()):
             self.bot.remove_end_state(state.get_state_id())
             state.setStyleSheet(self.normal_style_css)
+
+    def paint_start_state(self, state: StateUI):
+        state.setStyleSheet(self.start_style_css)
+
+    def paint_end_state(self, state: StateUI):
+        state.setStyleSheet(self.end_style_css)

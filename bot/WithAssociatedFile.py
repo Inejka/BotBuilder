@@ -20,4 +20,7 @@ def WithAssociatedFile(cls):
         def get_associated_file(self):
             return self.__associated_file_path
 
+        def set_associated_file(self, name):
+            self.__associated_file_path = name
+
     return Wrapper

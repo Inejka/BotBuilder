@@ -5,6 +5,7 @@ from typing import List
 from PathFile import Paths
 from bot.State import State
 from bot.Transit import Transit
+from utils.StrWrapper import StrWrapper
 
 
 class Bot:
@@ -78,3 +79,50 @@ class Bot:
         to_return += ',"end_states":' + json.dumps(self.__end_states, default=State.get_id)
         to_return += "}"
         return json.loads(to_return)
+
+    def load(self):
+        with open(os.path.join(Paths.BotGeneratedFolder, "bot.json"), 'r') as file:
+            self.from_json(json.load(file))
+
+    def from_json(self, json_parsed):
+        # todo remove unnecessary information from json such as:
+        # bot->states->transits
+        # bot->states from dict to list
+        # bot->states from dict to list
+        # bot->end states from dict to list
+        self.__state_counter = json_parsed["state_counter"]
+        self.__transit_counter = json_parsed["transit_counter"]
+        for _, state in json_parsed["states"].items():
+            self.load_state(state)
+        for _, transit in json_parsed["transits"].items():
+            self.load_transit(transit)
+        self.load_start_end_states(json_parsed["start_state"], json_parsed["end_states"])
+
+    def load_state(self, load_from):
+        state = State(load_from["id"][load_from["id"].rfind("_") + 1:])
+        state.set_name(load_from["name"])
+        state.set_associated_file(load_from["associated_file_path"])
+        self.__states[load_from["id"]] = state
+
+    def load_transit(self, load_from):
+        transit = Transit(load_from["inner_id"][load_from["inner_id"].rfind("_") + 1:],
+                          self.__states[load_from["from_state"]],
+                          self.__states[load_from["to_state"]], load_from["priority"])
+        transit.set_name(load_from["name"])
+        transit.set_associated_file(load_from["associated_file_path"])
+        self.__transits[transit.get_id()] = transit
+        self.__states[load_from["from_state"]].add_transit(transit)
+
+    def load_start_end_states(self, start_state_id, end_states):
+        self.__start_state = self.__states[start_state_id]
+        for _, i in end_states.items():
+            self.__end_states[i] = self.__states[i]
+
+    def get_name_wrapper_by_state_id(self, state_id) -> StrWrapper:
+        return self.__states[state_id].get_name()
+
+    def get_name_wrapper_by_transit_id(self, transit_id) -> StrWrapper:
+        return self.__transits[transit_id].get_name()
+
+    def get_transit_by_id(self, transit_id) -> Transit:
+        return self.__transits[transit_id]

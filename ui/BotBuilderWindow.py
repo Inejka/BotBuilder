@@ -25,20 +25,6 @@ class BotBuilderWindow(QGraphicsView):
         self.scene_s = QGraphicsScene()
         self.setScene(self.scene_s)
 
-        rect = QGraphicsRectItem(0, 0, 200, 50)
-        rect.setPos(50, 20)
-        brush = QBrush(Qt.GlobalColor.red)
-        rect.setBrush(brush)
-
-        # Define the pen (line)
-        pen = QPen(Qt.GlobalColor.cyan)
-        pen.setWidth(10)
-        rect.setPen(pen)
-        self.scene_s.addItem(rect)
-        for item in self.scene_s.items():
-            item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
-            item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
-
     def init_ui(self):
         self.setStyleSheet(get_style(Paths.BotBuilderWindow))
 

@@ -7,7 +7,7 @@ from utils.GetStyleFromFile import get_style
 from utils.KOSTYAWrapper import KostyaWrapper
 
 
-def SimpleWidgetWithMenuWr(cls):
+def SimpleWidgetWithMenu(cls):
     @KostyaWrapper
     class Wrapper(cls):
         def __init__(self, *args, **kwargs):
@@ -37,16 +37,10 @@ def SimpleWidgetWithMenuWr(cls):
                     action_menu.triggered.connect(action)
 
         def contextMenuEvent(self, event):
-            self.menu_pos = event.pos()
+            self.menu_pos = event.pos() if self.custom_map is None else self.custom_map(event.pos())
             self.menu.exec(event.globalPos())
 
         def get_menu_pos(self):
             return self.menu_pos
 
     return Wrapper
-
-
-@SimpleWidgetWithMenuWr
-class SimpleWidgetWithMenu(QFrame):
-    def __init__(self, names_with_actions=None):
-        super().__init__()

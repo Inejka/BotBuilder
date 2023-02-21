@@ -1,7 +1,9 @@
 import json
 import os
 
-from PyQt6.QtCore import QPoint
+from PyQt6.QtCore import QPoint, Qt, QPointF
+from PyQt6.QtGui import QBrush, QPen
+from PyQt6.QtWidgets import QGraphicsItem
 
 from PathFile import Paths
 from controllers.MainWindowMenuBarController import MainWindowMenuBarController
@@ -32,9 +34,19 @@ class UIController:
         state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
                                          ("Add end", self.stateUIColorController.add_end_state, state_ui),
                                          ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])
-        state_ui.move(point)
-        builder.add_widget(state_ui)
+        self.create_control_proxy_and_bind(builder, point, state_ui)
         self.state_uis[state_id] = state_ui
+
+    def create_control_proxy_and_bind(self, builder, point, state_ui):
+        proxy = builder.add_widget(state_ui)
+        proxy.setPos(point)
+        proxyControl = builder.scene().addRect(0, 0, state_ui.width(), 20, QPen(Qt.GlobalColor.black),
+                                               QBrush(Qt.GlobalColor.darkGreen))
+        proxyControl.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
+        proxyControl.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
+        proxy.setParentItem(proxyControl)
+        proxy.setPos(0, proxyControl.rect().height())
+        proxyControl.setPos(point)
 
     def try_open_editor(self, id):
         print(id)
@@ -117,7 +129,7 @@ class UIController:
         builder = self.MainWindow.get_bot_builder_window()
         self.initialize_state(builder, load_from["state_id"],
                               self.bot.get_name_wrapper_by_state_id(load_from["state_id"]),
-                              QPoint(load_from["pos_x"], load_from["pos_y"]))
+                              QPointF(load_from["pos_x"], load_from["pos_y"]))
 
     def load_transit(self, load_from, state_uis_reference):
         builder = self.MainWindow.get_bot_builder_window()

@@ -1,17 +1,17 @@
 import math
 
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPainter, QPen, QBrush
 from PyQt6.QtWidgets import QScrollArea, QGraphicsScene, QGraphicsView, QGraphicsRectItem, QGraphicsItem
 
 from PathFile import Paths
-from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenuWr, SimpleWidgetWithMenu
+from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 from utils.GetStyleFromFile import get_style
 from utils.LinesWrapper import LinesWrapper
 
 
-@SimpleWidgetWithMenuWr
+@SimpleWidgetWithMenu
 class BotBuilderWindow(QGraphicsView):
     # todo implement movement by left click or middle button
     # todo implement auto resize
@@ -46,10 +46,13 @@ class BotBuilderWindow(QGraphicsView):
         self.scene().addItem(item)
 
     def add_widget(self, widget):
-        self.scene().addWidget(widget)
+        return self.scene().addWidget(widget)
 
     def get_lines_wrapper(self) -> LinesWrapper:
         return self.lines
+
+    def custom_map(self, point):
+        return self.mapToScene(point)
 
     # def paintEvent(self, e):
     #     qp = QPainter()

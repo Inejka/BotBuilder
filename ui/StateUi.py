@@ -5,14 +5,13 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame
 
 from PathFile import Paths
-from ui.SimpleMovableWidget import SimpleMovableWidget
-from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu, SimpleWidgetWithMenuWr
+from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 from utils.GetStyleFromFile import get_style
 from utils.LinesWrapper import Line, Point
 
 
-@SimpleMovableWidget
-@SimpleWidgetWithMenuWr
+
+@SimpleWidgetWithMenu
 class StateUI(QFrame):
     def __init__(self,state_name, lines, state_id,
                  try_create_transit_callback, update_line_callback, try_open_editor_callback):
@@ -55,7 +54,6 @@ class StateUI(QFrame):
                                       self.mapToParent(mouse_event.pos()).x(),
                                       self.mapToParent(mouse_event.pos()).y())
             self.lines.add_line(self.creating_line)
-
     def mouseReleaseEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         #todo fix right click and creating line bug
         #todo fix move state over screen

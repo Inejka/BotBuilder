@@ -67,7 +67,6 @@ class UIController:
         return None
 
     def clear(self):
-        # todo fix clear
         self.state_uis_controller.clear()
         for key, value in self.transit_uis.items():
             self.MainWindow.get_bot_builder_window().get_lines_wrapper().remove_line(value)

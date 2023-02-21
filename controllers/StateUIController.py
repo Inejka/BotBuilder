@@ -56,6 +56,8 @@ class StateUIController:
             self.stateUIColorController.paint_end_state(self.state_uis[i])
 
     def clear(self):
+        builder = self.mainWindow.get_bot_builder_window()
         for key, value in self.state_uis.items():
             value.deleteLater()
+            builder.scene().removeItem(value.get_control_proxy())
         self.state_uis.clear()

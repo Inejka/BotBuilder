@@ -2,12 +2,22 @@ import json
 
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame
+from PyQt6.QtGui import QPen, QBrush
+from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame, QGraphicsRectItem, QGraphicsItem
 
 from PathFile import Paths
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 from utils.GetStyleFromFile import get_style
 from utils.LinesWrapper import Line, Point
+
+
+class ControlRectangle(QGraphicsRectItem):
+    def __init__(self, w, h=10):
+        super().__init__(0, 0, w, h)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
+        self.setPen(QPen(Qt.GlobalColor.cyan))
+        self.setBrush(QBrush(Qt.GlobalColor.darkGreen))
 
 
 @SimpleWidgetWithMenu
@@ -101,6 +111,8 @@ class StateUI(QFrame):
     def bind_proxies(self, control_proxy, proxy):
         self.scene_control_proxy = control_proxy
         self.scene_proxy = proxy
+        control_proxy.contextMenuEvent = self.contextMenuEvent
+        proxy.contextMenuEvent = self.contextMenuEvent
 
     def get_control_proxy(self):
         return self.scene_control_proxy

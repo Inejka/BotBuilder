@@ -1,9 +1,7 @@
 from functools import partial
 
-from PyQt6.QtWidgets import QFrame, QMenu
+from PyQt6.QtWidgets import QMenu
 
-from PathFile import Paths
-from utils.GetStyleFromFile import get_style
 from utils.KOSTYAWrapper import KostyaWrapper
 
 
@@ -13,6 +11,8 @@ def SimpleWidgetWithMenu(cls):
         def __init__(self, *args, **kwargs):
             self.menu = None
             self.menu_pos = None
+            if not hasattr(self, "custom_map"):
+                self.custom_map = None
             self.names_with_actions = kwargs["names_with_actions"] if "names_with_actions" in kwargs else None
             self.initMenu()
             # makes statUI borders transparent, but without it menustyle is applyed to whole app
@@ -37,6 +37,8 @@ def SimpleWidgetWithMenu(cls):
                     action_menu.triggered.connect(action)
 
         def contextMenuEvent(self, event):
+            if super().contextMenuEvent(event):
+                return
             self.menu_pos = event.pos() if self.custom_map is None else self.custom_map(event.pos())
             self.menu.exec(event.globalPos())
 

@@ -1,9 +1,4 @@
-import math
-
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QPainter, QPen, QBrush
-from PyQt6.QtWidgets import QScrollArea, QGraphicsScene, QGraphicsView, QGraphicsRectItem, QGraphicsItem
+from PyQt6.QtWidgets import QGraphicsScene, QGraphicsView
 
 from PathFile import Paths
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
@@ -39,6 +34,12 @@ class BotBuilderWindow(QGraphicsView):
 
     def custom_map(self, point):
         return self.mapToScene(point)
+
+    def contextMenuEvent(self, event):
+        if self.itemAt(event.pos()):
+            self.itemAt(event.pos()).contextMenuEvent(event)
+            # super().contextMenuEvent(event)
+            return True
 
     # def paintEvent(self, e):
     #     qp = QPainter()

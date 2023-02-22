@@ -1,9 +1,7 @@
-from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QBrush, QPen
-from PyQt6.QtWidgets import QGraphicsItem
+from PyQt6.QtCore import QPointF
 
 from controllers.StateUIColorController import StateUIColorController
-from ui.StateUi import StateUI
+from ui.StateUi import StateUI, ControlRectangle
 
 
 class StateUIController:
@@ -34,13 +32,11 @@ class StateUIController:
     def create_control_proxy_and_bind(self, builder, point, state_ui):
         proxy = builder.add_widget(state_ui)
         proxy.setPos(point)
-        proxyControl = builder.scene().addRect(0, 0, state_ui.width(), 20, QPen(Qt.GlobalColor.black),
-                                               QBrush(Qt.GlobalColor.darkGreen))
-        proxyControl.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
-        proxyControl.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
+        proxyControl = ControlRectangle(state_ui.width())
         proxy.setParentItem(proxyControl)
         proxy.setPos(0, proxyControl.rect().height())
         proxyControl.setPos(point)
+        builder.add_item(proxyControl)
         state_ui.bind_proxies(proxyControl, proxy)
 
     def load_state(self, load_from):

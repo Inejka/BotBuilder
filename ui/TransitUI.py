@@ -9,25 +9,43 @@ from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsSceneM
 
 
 class Circle(QGraphicsEllipseItem):
-    def __init__(self, x, y, w, h, color: Qt.GlobalColor, move_callback):
+    def __init__(self, x, y, w, h, color: Qt.GlobalColor, move_callback, transit):
         super().__init__(x, y, w, h)
+        self.start_mouse_click_position = None
         self.offset = None
         self.center_point = QPointF(w / 2, h / 2)
+
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges, True)
         self.setPen(QPen(Qt.GlobalColor.cyan))
         self.setBrush(QBrush(color))
+
+        self.state_id = None
         self.move_callback = move_callback
+        self.transit = transit
+
         self.z_level = 2
         self.setZValue(self.z_level)
 
+    def mousePressEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
+        self.start_mouse_click_position = self.pos()
+        super().mousePressEvent(event)
+
     def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        self.ungrabMouse()
+        founded_state_to_bind = False
         for item in self.scene().items(self.get_center()):
             if item.__class__.__name__ == "StateUIProxy":
                 self.bind_to_stateUI(item.get_state_ui())
-                break
+                founded_state_to_bind = True
+                # after creation of transit i force input to end_circle, so it's mouseReleaseEvent will be fired first
+                # thats, if i found StateUiProxy, i bind end_circle to it and assume that transit created
+                self.transit.update_transit()
+        if not founded_state_to_bind:
+            self.setPos(self.start_mouse_click_position)
         super().mouseReleaseEvent(event)
+        self.ungrabMouse()
+        if not founded_state_to_bind and not self.transit.is_created:
+            self.transit.destroy()
 
     def get_center(self):
         return self.scenePos() + self.center_point
@@ -41,17 +59,24 @@ class Circle(QGraphicsEllipseItem):
         scenePos = self.scenePos()
         self.setParentItem(state.get_proxy())
         self.setPos(scenePos - state.get_proxy().scenePos())
+        self.state_id = state.get_state_id()
+
+    def get_state_id(self):
+        return self.state_id
 
 
 class Line(QGraphicsPathItem):
     def __init__(self, from_point: QPointF = None, to_point: QPointF = None):
         super().__init__()
+
+        self.from_point = from_point
+        self.to_point = to_point
         self.width = 3
+
         self.pen = QPen(Qt.GlobalColor.cyan)
         self.pen.setWidth(self.width)
         self.setAcceptHoverEvents(True)
-        self.from_point = from_point
-        self.to_point = to_point
+
         self.z_level = 1
         self.setZValue(self.z_level)
 
@@ -90,15 +115,42 @@ class Line(QGraphicsPathItem):
 
 
 class TransitUI:
-    def __init__(self, point, scene, state):
+    def __init__(self, point, scene, state, create_transit_callback):
         self.path = Line(point, point)
-        scene.addItem(self.path)
-        self.end_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.red, self.path.set_to_point)
+        self.end_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.red, self.path.set_to_point, self)
+        self.start_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.darkGreen, self.path.set_from_point, self)
+
         self.end_circle.setPos(point.x() - 5, point.y() - 5)
-        scene.addItem(self.end_circle)
-        self.start_circle = Circle(0, 0, 10, 10,
-                                   Qt.GlobalColor.darkGreen,
-                                   self.path.set_from_point)
-        scene.addItem(self.start_circle)
         self.start_circle.setPos(point - self.start_circle.center_point)
         self.start_circle.bind_to_stateUI(state)
+        self.is_created = False
+
+        scene.addItem(self.path)
+        scene.addItem(self.end_circle)
+        scene.addItem(self.start_circle)
+
+        self.create_transit_callback = create_transit_callback
+        self.name = None
+        self.transit_id = None
+
+    def destroy(self):
+        self.path.scene().removeItem(self.path)
+        self.end_circle.scene().removeItem(self.end_circle)
+        self.start_circle.scene().removeItem(self.start_circle)
+
+    def update_transit(self):
+        if not self.is_created:
+            self.is_created = True
+            self.create_transit_callback(self)
+
+    def get_from_state_id(self):
+        return self.start_circle.get_state_id()
+
+    def get_to_state_id(self):
+        return self.end_circle.get_state_id()
+
+    def set_id(self, id):
+        self.transit_id = id
+
+    def set_name(self, name):
+        self.name = name

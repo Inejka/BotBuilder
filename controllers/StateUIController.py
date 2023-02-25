@@ -2,7 +2,6 @@ from PyQt6.QtCore import QPointF
 
 from controllers.StateUIColorController import StateUIColorController
 from ui.StateUi import StateUI, ControlRectangle, StateUIProxy
-from utils.LinesWrapper import Point
 
 
 class StateUIController:
@@ -20,9 +19,7 @@ class StateUIController:
         self.initialize_state(builder, state_id, state_name, builder.get_menu_pos())
 
     def initialize_state(self, builder, state_id, state_name, point):
-        state_ui = StateUI(state_name, builder.get_lines_wrapper(), state_id,
-                           self.transit_uis_controller.try_create_transit,
-                           self.transit_uis_controller.update_line_equation_by_transit_id, self.try_open_editor)
+        state_ui = StateUI(state_name, state_id, self.transit_uis_controller.create_transit, self.try_open_editor)
         state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
                                          ("Add end", self.stateUIColorController.add_end_state, state_ui),
                                          ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])
@@ -57,14 +54,6 @@ class StateUIController:
             value.deleteLater()
             builder.scene().removeItem(value.get_control_proxy())
         self.state_uis.clear()
-
-    def get_state_by_point(self, point: Point, ignore_id: str) -> StateUI:
-        for i in self.state_uis.values():
-            if i.pos().x() < point[0] < i.pos().x() + i.size().width() and \
-                    i.pos().y() < point[1] < i.pos().y() + i.size().height() and \
-                    not ignore_id == i.state_id:
-                return i
-        return None
 
     def set_transit_uis_controller(self, transit_uis_controller):
         self.transit_uis_controller = transit_uis_controller

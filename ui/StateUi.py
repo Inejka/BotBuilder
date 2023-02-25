@@ -1,23 +1,49 @@
 import json
+import typing
 
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QPointF, QObject, QEvent, QPoint
 from PyQt6.QtGui import QPen, QBrush
-from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame, QGraphicsRectItem, QGraphicsItem
+from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame, QGraphicsRectItem, QGraphicsItem, QWidget, \
+    QGraphicsSceneContextMenuEvent, QGraphicsSceneMouseEvent, QGraphicsProxyWidget
 
 from PathFile import Paths
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
+from ui.TransitUI import TransitUI
 from utils.GetStyleFromFile import get_style
 from utils.LinesWrapper import Line, Point
 
 
+class StateUIProxy(QGraphicsProxyWidget):
+    def __init__(self, state_ui):
+        super().__init__()
+        self.state_ui = state_ui
+        self.setWidget(state_ui)
+
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        super().mousePressEvent(event)
+        if not event.isAccepted():
+            self.state_ui.recent_transit_ui.end_circle.grabMouse()
+            self.state_ui.recent_transit_ui.end_circle.mousePressEvent(event)
+            event.accept()
+
+    def get_state_ui(self):
+        return self.state_ui
+
+
 class ControlRectangle(QGraphicsRectItem):
-    def __init__(self, w, h=10):
+    def __init__(self, w, stateUi, h=10):
         super().__init__(0, 0, w, h)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
+        # self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
         self.setPen(QPen(Qt.GlobalColor.cyan))
         self.setBrush(QBrush(Qt.GlobalColor.darkGreen))
+        self.stateUI = stateUi
+
+    def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
+        self.stateUI.menu_pos = event.pos() if self.stateUI.custom_map is None else self.stateUI.custom_map(event.pos())
+        self.stateUI.menu.exec(QPoint(int(event.screenPos().x()), int(event.screenPos().y())))
+        event.accept()
 
 
 @SimpleWidgetWithMenu
@@ -25,7 +51,6 @@ class StateUI(QFrame):
     def __init__(self, state_name, lines, state_id,
                  try_create_transit_callback, update_line_callback, try_open_editor_callback):
         super().__init__()
-        # todo fix menu
         self.scene_control_proxy = None
         self.scene_proxy = None
         self.state_name_input = None
@@ -39,7 +64,7 @@ class StateUI(QFrame):
         self.try_create_transit_callback = try_create_transit_callback
         self.update_callback = self.lines.update_callback
         self.point_with_offset = {}
-
+        self.recent_transit_ui = None
         self.init_ui()
 
     def init_ui(self):
@@ -59,6 +84,9 @@ class StateUI(QFrame):
         self.state_name.set_str(self.state_name_input.text())
 
     def mousePressEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
+        mouse_event.ignore()
+        self.recent_transit_ui = TransitUI(self.scene_proxy.mapToScene(QPointF(mouse_event.pos())),
+                                           self.scene_proxy.scene(), self)
         if mouse_event.button() == Qt.MouseButton.LeftButton:
             self.creating_line = Line(self.update_callback, self.state_id,
                                       self.mapToParent(mouse_event.pos()).x(),
@@ -111,8 +139,8 @@ class StateUI(QFrame):
     def bind_proxies(self, control_proxy, proxy):
         self.scene_control_proxy = control_proxy
         self.scene_proxy = proxy
-        control_proxy.contextMenuEvent = self.contextMenuEvent
-        proxy.contextMenuEvent = self.contextMenuEvent
+        # control_proxy.contextMenuEvent = self.contextMenuEvent
+        # proxy.contextMenuEvent = self.contextMenuEvent
 
     def get_control_proxy(self):
         return self.scene_control_proxy

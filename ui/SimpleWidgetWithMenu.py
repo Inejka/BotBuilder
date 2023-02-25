@@ -41,6 +41,7 @@ def SimpleWidgetWithMenu(cls):
                 return
             self.menu_pos = event.pos() if self.custom_map is None else self.custom_map(event.pos())
             self.menu.exec(event.globalPos())
+            event.accept()
 
         def get_menu_pos(self):
             return self.menu_pos

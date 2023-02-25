@@ -9,7 +9,6 @@ from utils.LinesWrapper import LinesWrapper
 @SimpleWidgetWithMenu
 class BotBuilderWindow(QGraphicsView):
     # todo implement movement by left click or middle button
-    # todo implement auto resize
     # todo implement area selection and movement
     def __init__(self):
         super().__init__()
@@ -19,6 +18,12 @@ class BotBuilderWindow(QGraphicsView):
         self.lines_equations = {}
         self.scene_s = QGraphicsScene()
         self.setScene(self.scene_s)
+
+        def f():
+            print("selection changed")
+            self.update()
+            self.scene_s.update()
+        self.scene_s.selectionChanged.connect(f)
 
     def init_ui(self):
         self.setStyleSheet(get_style(Paths.BotBuilderWindow))
@@ -36,11 +41,8 @@ class BotBuilderWindow(QGraphicsView):
         return self.mapToScene(point)
 
     def contextMenuEvent(self, event):
-        if self.itemAt(event.pos()):
-            self.itemAt(event.pos()).contextMenuEvent(event)
-            # super().contextMenuEvent(event)
-            return True
-
+        super().contextMenuEvent(event)
+        return event.isAccepted()
     # def paintEvent(self, e):
     #     qp = QPainter()
     #     qp.begin(self)

@@ -47,6 +47,6 @@ class TransitUIController:
         self.state_uis_controller = state_uis_controller
 
     def clear(self):
-        for key, value in self.transit_uis.items():
-            self.MainWindow.get_bot_builder_window().get_lines_wrapper().remove_line(value)
+        for _, value in self.transit_uis.items():
+            value.destroy()
         self.transit_uis.clear()

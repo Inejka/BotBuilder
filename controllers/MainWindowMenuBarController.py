@@ -26,6 +26,7 @@ class MainWindowMenuBarController:
 
         clearAction = QAction("Clear", self.mainWindow)
         clearAction.triggered.connect(self.clear)
+        clearAction.setShortcut("Ctrl+r")
 
         saveAction = QAction("Save", self.mainWindow)
         saveAction.triggered.connect(self.save)

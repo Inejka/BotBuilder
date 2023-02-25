@@ -135,8 +135,11 @@ class TransitUI:
 
     def destroy(self):
         self.path.scene().removeItem(self.path)
-        self.end_circle.scene().removeItem(self.end_circle)
-        self.start_circle.scene().removeItem(self.start_circle)
+        # if because transitUi is cleared first, and it removes it child
+        if self.end_circle.scene():
+            self.end_circle.scene().removeItem(self.end_circle)
+        if self.start_circle.scene():
+            self.start_circle.scene().removeItem(self.start_circle)
 
     def update_transit(self):
         if not self.is_created:

@@ -126,3 +126,6 @@ class Bot:
 
     def get_transit_by_id(self, transit_id) -> Transit:
         return self.__transits[transit_id]
+
+    def get_state_by_id(self, state_id) -> State:
+        return self.__states[state_id]

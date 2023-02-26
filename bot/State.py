@@ -36,4 +36,8 @@ class State:
         transits = [f.get_name().get() for f in self.__transits]
         return json.loads(
             '{"id":"' + self.__id + '","name":"' + self.__name.get() + '","transits":' +
-            str(transits).replace("'", '"') + ',"associated_file_path":"' + self.get_associated_file().replace("\\", "\\\\") + '"}')
+            str(transits).replace("'", '"') + ',"associated_file_path":"' + self.get_associated_file().replace("\\",
+                                                                                                               "\\\\") + '"}')
+
+    def remove_transit(self, transit: Transit) -> None:
+        self.__transits.remove(transit)

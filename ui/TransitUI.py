@@ -1,11 +1,13 @@
 import math
 import typing
+from dataclasses import dataclass
 from random import random, randint
 
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QPen, QBrush, QPainterPath, QColor
-from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsSceneMouseEvent, QGraphicsPathItem, QWidget
+from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsSceneMouseEvent, QGraphicsPathItem, QWidget, \
+    QGraphicsScene
 
 
 class Circle(QGraphicsEllipseItem):
@@ -116,21 +118,31 @@ class Line(QGraphicsPathItem):
 
 
 class TransitUI:
-    def __init__(self, point, scene, state, create_transit_callback):
-        self.path = Line(point, point)
+    @dataclass
+    class TransitUIParams:
+        # self, point, scene, state, create_transit_callback, update_transit_callback
+        point: QPointF
+        scene: QGraphicsScene
+        state: typing.Any
+        create_transit_callback: typing.Callable
+        update_transit_callback: typing.Callable
+
+    def __init__(self, params: TransitUIParams):
+        self.path = Line(params.point, params.point)
         self.end_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.red, self.path.set_to_point, self)
         self.start_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.darkGreen, self.path.set_from_point, self)
 
-        self.end_circle.setPos(point.x() - 5, point.y() - 5)
-        self.start_circle.setPos(point - self.start_circle.center_point)
-        self.start_circle.bind_to_stateUI(state)
+        self.end_circle.setPos(params.point.x() - 5, params.point.y() - 5)
+        self.start_circle.setPos(params.point - self.start_circle.center_point)
+        self.start_circle.bind_to_stateUI(params.state)
         self.is_created = False
 
-        scene.addItem(self.path)
-        scene.addItem(self.end_circle)
-        scene.addItem(self.start_circle)
+        params.scene.addItem(self.path)
+        params.scene.addItem(self.end_circle)
+        params.scene.addItem(self.start_circle)
 
-        self.create_transit_callback = create_transit_callback
+        self.create_transit_callback = params.create_transit_callback
+        self.update_transit_callback = params.update_transit_callback
         self.name = None
         self.transit_id = None
 
@@ -156,6 +168,8 @@ class TransitUI:
         if not self.is_created:
             self.is_created = True
             self.create_transit_callback(self)
+        else:
+            self.update_transit_callback(self)
 
     def get_from_state_id(self):
         return self.start_circle.get_state_id()
@@ -168,3 +182,6 @@ class TransitUI:
 
     def set_name(self, name):
         self.name = name
+
+    def get_id(self):
+        return self.transit_id

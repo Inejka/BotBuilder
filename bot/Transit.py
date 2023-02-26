@@ -37,3 +37,9 @@ class Transit:
 
     def get_to_state_id(self) -> str:
         return self.__to_state.get_id()
+
+    def set_to_state(self, state):
+        self.__to_state = state
+
+    def set_from_state(self, state):
+        self.__from_state = state

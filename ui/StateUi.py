@@ -1,5 +1,6 @@
 import json
 import typing
+from dataclasses import dataclass
 
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, QPointF, QObject, QEvent, QPoint
@@ -11,6 +12,7 @@ from PathFile import Paths
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 from ui.TransitUI import TransitUI
 from utils.GetStyleFromFile import get_style
+from utils.StrWrapper import StrWrapper
 
 
 class StateUIProxy(QGraphicsProxyWidget):
@@ -48,16 +50,23 @@ class ControlRectangle(QGraphicsRectItem):
 
 @SimpleWidgetWithMenu
 class StateUI(QFrame):
-    def __init__(self, state_name, state_id, create_transit_callback, try_open_editor_callback):
+    @dataclass
+    class StateUIParams:
+        state_name: StrWrapper
+        state_id: str
+        try_open_editor_callback: typing.Callable
+        transit_callbacks: typing.Any
+
+    def __init__(self, params: StateUIParams):
         super().__init__()
         self.scene_control_proxy = None
         self.scene_proxy = None
         self.state_name_input = None
         self.layout = None
-        self.state_id = state_id
-        self.state_name = state_name
-        self.try_open_editor_callback = try_open_editor_callback
-        self.create_transit_callback = create_transit_callback
+        self.state_id = params.state_id
+        self.state_name = params.state_name
+        self.try_open_editor_callback = params.try_open_editor_callback
+        self.trans_callbacks = params.transit_callbacks
         self.recent_transit_ui = None
         self.init_ui()
 
@@ -79,8 +88,10 @@ class StateUI(QFrame):
 
     def mousePressEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         if mouse_event.button() == Qt.MouseButton.LeftButton:
-            self.recent_transit_ui = TransitUI(self.scene_proxy.mapToScene(QPointF(mouse_event.pos())),
-                                               self.scene_proxy.scene(), self, self.create_transit_callback)
+            self.recent_transit_ui = TransitUI(
+                TransitUI.TransitUIParams(self.scene_proxy.mapToScene(QPointF(mouse_event.pos())),
+                                          self.scene_proxy.scene(), self, self.trans_callbacks.create_transit_callback,
+                                          self.trans_callbacks.update_transit_callback))
             mouse_event.ignore()
 
     def mouseDoubleClickEvent(self, mouse_event: QtGui.QMouseEvent) -> None:

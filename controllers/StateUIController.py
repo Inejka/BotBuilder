@@ -19,7 +19,8 @@ class StateUIController:
         self.initialize_state(builder, state_id, state_name, builder.get_menu_pos())
 
     def initialize_state(self, builder, state_id, state_name, point):
-        state_ui = StateUI(state_name, state_id, self.transit_uis_controller.create_transit, self.try_open_editor)
+        state_ui = StateUI(StateUI.StateUIParams(state_name, state_id, self.try_open_editor,
+                                                 self.transit_uis_controller.get_callbacks()))
         state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
                                          ("Add end", self.stateUIColorController.add_end_state, state_ui),
                                          ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])

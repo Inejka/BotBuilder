@@ -1,10 +1,6 @@
 import json
 import os
 
-from PyQt6.QtCore import QPoint, Qt, QPointF
-from PyQt6.QtGui import QBrush, QPen
-from PyQt6.QtWidgets import QGraphicsItem
-
 from PathFile import Paths
 from controllers.MainWindowMenuBarController import MainWindowMenuBarController
 from controllers.StateUIController import StateUIController

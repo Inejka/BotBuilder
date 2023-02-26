@@ -1,5 +1,3 @@
-import types
-
 from PyQt6.QtCore import QPointF
 
 from ui.TransitUI import TransitUI
@@ -23,9 +21,9 @@ class TransitUIController:
         from_state_id = bot_transit.get_from_state_id()
         to_state_id = bot_transit.get_to_state_id()
 
-        transitUi = TransitUI(TransitUI.TransitUIParams(QPointF(0, 0), self.state_uis_controller.state_uis[
-            from_state_id].get_proxy().scene(), self.state_uis_controller.state_uis[from_state_id],
-                                                        self.create_transit, self.update_transit_from_ui))
+        transitUi = self.generate_transit_ui(
+            TransitUI.TransitUIParams(QPointF(0, 0), self.state_uis_controller.state_uis[
+                from_state_id].get_proxy().scene(), self.state_uis_controller.state_uis[from_state_id]))
         transitUi.is_created = True
         transitUi.start_circle.setParentItem(None)
         transitUi.start_circle.setPos(QPointF(load_from["start_point"]["x"], load_from["start_point"]["y"]))
@@ -59,8 +57,8 @@ class TransitUIController:
             value.destroy()
         self.transit_uis.clear()
 
-    def get_callbacks(self):
-        temp = types.SimpleNamespace()
-        temp.create_transit_callback = self.create_transit
-        temp.update_transit_callback = self.update_transit_from_ui
-        return temp
+    def generate_transit_ui(self, params: TransitUI.TransitUIParams) -> TransitUI:
+        params.update_transit_callback = self.update_transit_from_ui
+        params.create_transit_callback = self.create_transit
+        transitUi = TransitUI(params)
+        return transitUi

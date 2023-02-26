@@ -1,11 +1,9 @@
-import math
 import typing
 from dataclasses import dataclass
-from random import random, randint
 
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QPen, QBrush, QPainterPath, QColor
+from PyQt6.QtGui import QPen, QBrush, QPainterPath
 from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsSceneMouseEvent, QGraphicsPathItem, QWidget, \
     QGraphicsScene
 
@@ -124,8 +122,8 @@ class TransitUI:
         point: QPointF
         scene: QGraphicsScene
         state: typing.Any
-        create_transit_callback: typing.Callable
-        update_transit_callback: typing.Callable
+        create_transit_callback: typing.Callable = None
+        update_transit_callback: typing.Callable = None
 
     def __init__(self, params: TransitUIParams):
         self.path = Line(params.point, params.point)

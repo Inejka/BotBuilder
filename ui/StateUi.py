@@ -3,9 +3,9 @@ import typing
 from dataclasses import dataclass
 
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QPointF, QObject, QEvent, QPoint
+from PyQt6.QtCore import Qt, QPointF, QPoint
 from PyQt6.QtGui import QPen, QBrush
-from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame, QGraphicsRectItem, QGraphicsItem, QWidget, \
+from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame, QGraphicsRectItem, QGraphicsItem, \
     QGraphicsSceneContextMenuEvent, QGraphicsSceneMouseEvent, QGraphicsProxyWidget
 
 from PathFile import Paths
@@ -55,7 +55,7 @@ class StateUI(QFrame):
         state_name: StrWrapper
         state_id: str
         try_open_editor_callback: typing.Callable
-        transit_callbacks: typing.Any
+        generate_transit_callback: typing.Callable
 
     def __init__(self, params: StateUIParams):
         super().__init__()
@@ -66,7 +66,7 @@ class StateUI(QFrame):
         self.state_id = params.state_id
         self.state_name = params.state_name
         self.try_open_editor_callback = params.try_open_editor_callback
-        self.trans_callbacks = params.transit_callbacks
+        self.generate_transit_callback = params.generate_transit_callback
         self.recent_transit_ui = None
         self.init_ui()
 
@@ -88,10 +88,9 @@ class StateUI(QFrame):
 
     def mousePressEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
         if mouse_event.button() == Qt.MouseButton.LeftButton:
-            self.recent_transit_ui = TransitUI(
+            self.recent_transit_ui = self.generate_transit_callback(
                 TransitUI.TransitUIParams(self.scene_proxy.mapToScene(QPointF(mouse_event.pos())),
-                                          self.scene_proxy.scene(), self, self.trans_callbacks.create_transit_callback,
-                                          self.trans_callbacks.update_transit_callback))
+                                          self.scene_proxy.scene(), self))
             mouse_event.ignore()
 
     def mouseDoubleClickEvent(self, mouse_event: QtGui.QMouseEvent) -> None:

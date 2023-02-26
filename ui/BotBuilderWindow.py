@@ -20,6 +20,7 @@ class BotBuilderWindow(QGraphicsView):
         self.scene_s = QGraphicsScene()
         self.setScene(self.scene_s)
         self.is_moving = False
+        self.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
 
     def init_ui(self):
         self.setStyleSheet(get_style(Paths.BotBuilderWindow))

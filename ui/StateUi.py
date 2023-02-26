@@ -34,7 +34,7 @@ class ControlRectangle(QGraphicsRectItem):
     def __init__(self, w, stateUi, h=10):
         super().__init__(0, 0, w, h)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
-        # self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
         self.setPen(QPen(Qt.GlobalColor.cyan))
         self.setBrush(QBrush(Qt.GlobalColor.darkGreen))
         self.stateUI = stateUi

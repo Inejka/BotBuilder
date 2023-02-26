@@ -29,30 +29,8 @@ class TransitUIController:
         transitUi.end_circle.setPos(QPointF(load_from["end_point"]["x"], load_from["end_point"]["y"]))
         transitUi.end_circle.bind_to_stateUI(self.state_uis_controller.state_uis[to_state_id])
         transitUi.start_circle.bind_to_stateUI(self.state_uis_controller.state_uis[from_state_id])
+
         self.finish_TransitUi_init(transitUi, transit_id, transit_name)
-        # builder = self.MainWindow.get_bot_builder_window()
-        # lines = builder.get_lines_wrapper()
-        # line = Line(lines.update_callback, self.bot.get_transit_by_id(load_from["transit_id"]).get_from_state_id(),
-        #             load_from["from_x"],
-        #             load_from["from_y"], load_from["to_x"],
-        #             load_from["to_y"])
-        # lines.add_line(line)
-        # self.state_uis_controller.get_state_by_id(line.from_id).add_point_with_offset(line[0],
-        #                                                                               self.find_point_data_and_create(
-        #                                                                                   state_uis_reference[
-        #                                                                                       self.bot.get_transit_by_id(
-        #                                                                                           load_from[
-        #                                                                                               "transit_id"]).get_from_state_id()],
-        #                                                                                   load_from["from_x"],
-        #                                                                                   load_from["from_y"],
-        #                                                                                   lines.update_callback))
-        # self.state_uis_controller.get_state_by_id(
-        #     self.bot.get_transit_by_id(load_from["transit_id"]).get_to_state_id()).add_point_with_offset(
-        #     line[1], self.find_point_data_and_create(
-        #         state_uis_reference[self.bot.get_transit_by_id(load_from["transit_id"]).get_to_state_id()],
-        #         load_from["to_x"], load_from["to_y"], lines.update_callback))
-        # line.set_transit_id(load_from["transit_id"])
-        # self.transit_uis[load_from["transit_id"]] = line
 
     def finish_TransitUi_init(self, transitUi, transit_id, transit_name):
         transitUi.set_name(transit_name)

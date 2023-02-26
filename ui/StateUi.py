@@ -22,6 +22,7 @@ class StateUIProxy(QGraphicsProxyWidget):
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super().mousePressEvent(event)
         if not event.isAccepted():
+            self.scene().clearSelection()
             self.state_ui.recent_transit_ui.end_circle.grabMouse()
             self.state_ui.recent_transit_ui.end_circle.mousePressEvent(event)
             event.accept()

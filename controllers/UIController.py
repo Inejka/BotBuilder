@@ -59,7 +59,7 @@ class UIController:
         for _, i in parsed_json["state_uis"].items():
             self.state_uis_controller.load_state(i)
         for _, i in parsed_json["transit_uis"].items():
-            self.transit_uis_controller.load_transit(i, parsed_json["state_uis"])
+            self.transit_uis_controller.load_transit(i)
         self.state_uis_controller.paint_end_start_states()
 
     def bind_controllers(self):

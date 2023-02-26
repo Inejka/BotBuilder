@@ -64,14 +64,10 @@ class Circle(QGraphicsEllipseItem):
     def get_state_id(self):
         return self.state_id
 
-    def get_local_pos(self):
-        return self.scenePos() - self.parentItem().scenePos()
-
 
 class Line(QGraphicsPathItem):
     def __init__(self, from_point: QPointF = None, to_point: QPointF = None):
         super().__init__()
-
         self.from_point = from_point
         self.to_point = to_point
         self.width = 3
@@ -94,9 +90,13 @@ class Line(QGraphicsPathItem):
 
     def set_from_point(self, point: QPointF):
         self.from_point = point
+        path = self.get_path()
+        self.setPath(path)
 
     def set_to_point(self, point: QPointF):
         self.to_point = point
+        path = self.get_path()
+        self.setPath(path)
 
     def hoverMoveEvent(self, event: 'QGraphicsSceneHoverEvent') -> None:
         super().hoverMoveEvent(event)
@@ -105,9 +105,7 @@ class Line(QGraphicsPathItem):
               widget: typing.Optional[QWidget] = ...) -> None:
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         painter.setPen(self.pen)
-        path = self.get_path()
-        self.setPath(path)
-        painter.drawPath(path)
+        painter.drawPath(self.path())
 
     def shape(self) -> QtGui.QPainterPath:
         qp = QtGui.QPainterPathStroker()
@@ -140,10 +138,10 @@ class TransitUI:
         to_return = {}
         to_return["transit_id"] = self.transit_id
         to_return["transit_name"] = self.name.get()
-        to_return["start_point"] = {"x": self.start_circle.get_local_pos().x(),
-                                    "y": self.start_circle.get_local_pos().y()}
-        to_return["end_point"] = {"x": self.end_circle.get_local_pos().x(),
-                                  "y": self.end_circle.get_local_pos().y()}
+        to_return["start_point"] = {"x": self.start_circle.scenePos().x(),
+                                    "y": self.start_circle.scenePos().y()}
+        to_return["end_point"] = {"x": self.end_circle.scenePos().x(),
+                                  "y": self.end_circle.scenePos().y()}
         return to_return
 
     def destroy(self):

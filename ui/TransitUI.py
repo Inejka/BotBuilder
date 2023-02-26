@@ -64,6 +64,9 @@ class Circle(QGraphicsEllipseItem):
     def get_state_id(self):
         return self.state_id
 
+    def get_local_pos(self):
+        return self.scenePos() - self.parentItem().scenePos()
+
 
 class Line(QGraphicsPathItem):
     def __init__(self, from_point: QPointF = None, to_point: QPointF = None):
@@ -132,6 +135,16 @@ class TransitUI:
         self.create_transit_callback = create_transit_callback
         self.name = None
         self.transit_id = None
+
+    def to_json(self):
+        to_return = {}
+        to_return["transit_id"] = self.transit_id
+        to_return["transit_name"] = self.name.get()
+        to_return["start_point"] = {"x": self.start_circle.get_local_pos().x(),
+                                    "y": self.start_circle.get_local_pos().y()}
+        to_return["end_point"] = {"x": self.end_circle.get_local_pos().x(),
+                                  "y": self.end_circle.get_local_pos().y()}
+        return to_return
 
     def destroy(self):
         self.path.scene().removeItem(self.path)

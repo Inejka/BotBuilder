@@ -10,6 +10,7 @@ from controllers.MainWindowMenuBarController import MainWindowMenuBarController
 from controllers.StateUIController import StateUIController
 from controllers.TransitUIController import TransitUIController
 from ui.StateUi import StateUI
+from ui.TransitUI import TransitUI
 
 
 class UIController:
@@ -43,8 +44,7 @@ class UIController:
         # todo find way to remove json loads
         to_return = '{'
         to_return += '"state_uis":' + json.dumps(self.state_uis, default=StateUI.to_json)
-        raise NotImplementedError("Transit Ui")
-        to_return += ',"transit_uis":' + json.dumps(self.transit_uis, default=Line.to_json)
+        to_return += ',"transit_uis":' + json.dumps(self.transit_uis, default=TransitUI.to_json)
         to_return += '}'
         return json.loads(to_return)
 

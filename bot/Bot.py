@@ -129,3 +129,8 @@ class Bot:
 
     def get_state_by_id(self, state_id) -> State:
         return self.__states[state_id]
+
+    def remove_transit_by_id(self, transit_id) -> None:
+        transit = self.__transits[transit_id]
+        self.__states[transit.get_from_state_id()].remove_transit(transit)
+        self.__transits.pop(transit_id)

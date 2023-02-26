@@ -61,4 +61,10 @@ class TransitUIController:
         params.update_transit_callback = self.update_transit_from_ui
         params.create_transit_callback = self.create_transit
         transitUi = TransitUI(params)
+        transitUi.set_names_with_actions([("Remove transit", self.remove_transit, transitUi)])
         return transitUi
+
+    def remove_transit(self, transit_UI: TransitUI) -> None:
+        self.bot.remove_transit_by_id(transit_UI.get_id())
+        self.transit_uis.pop(transit_UI.get_id())
+        transit_UI.destroy()

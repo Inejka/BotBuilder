@@ -24,7 +24,6 @@ class StateUIProxy(QGraphicsProxyWidget):
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super().mousePressEvent(event)
         if not event.isAccepted():
-            self.scene().clearSelection()
             self.state_ui.recent_transit_ui.end_circle.grabMouse()
             self.state_ui.recent_transit_ui.end_circle.mousePressEvent(event)
             event.accept()
@@ -32,19 +31,26 @@ class StateUIProxy(QGraphicsProxyWidget):
     def get_state_ui(self):
         return self.state_ui
 
+    def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
+        self.state_ui.menu_pos = event.pos() if self.state_ui.custom_map is None else self.state_ui.custom_map(
+            event.pos())
+        self.state_ui.menu.exec(QPoint(int(event.screenPos().x()), int(event.screenPos().y())))
+        event.accept()
+
 
 class ControlRectangle(QGraphicsRectItem):
-    def __init__(self, w, stateUi, h=10):
+    def __init__(self, w, state_ui, h=10):
         super().__init__(0, 0, w, h)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
         self.setPen(QPen(Qt.GlobalColor.cyan))
         self.setBrush(QBrush(Qt.GlobalColor.darkGreen))
-        self.stateUI = stateUi
+        self.state_ui = state_ui
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
-        self.stateUI.menu_pos = event.pos() if self.stateUI.custom_map is None else self.stateUI.custom_map(event.pos())
-        self.stateUI.menu.exec(QPoint(int(event.screenPos().x()), int(event.screenPos().y())))
+        self.state_ui.menu_pos = event.pos() if self.state_ui.custom_map is None else self.state_ui.custom_map(
+            event.pos())
+        self.state_ui.menu.exec(QPoint(int(event.screenPos().x()), int(event.screenPos().y())))
         event.accept()
 
 

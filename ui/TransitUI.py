@@ -2,10 +2,12 @@ import typing
 from dataclasses import dataclass
 
 from PyQt6 import QtCore, QtGui
-from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtCore import Qt, QPointF, QPoint
 from PyQt6.QtGui import QPen, QBrush, QPainterPath
 from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsSceneMouseEvent, QGraphicsPathItem, QWidget, \
     QGraphicsScene
+
+from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
 
 
 class Circle(QGraphicsEllipseItem):
@@ -28,6 +30,7 @@ class Circle(QGraphicsEllipseItem):
         self.setZValue(self.z_level)
 
     def mousePressEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
+        self.scene().clearSelection()
         self.start_mouse_click_position = self.pos()
         super().mousePressEvent(event)
 
@@ -66,7 +69,7 @@ class Circle(QGraphicsEllipseItem):
 
 
 class Line(QGraphicsPathItem):
-    def __init__(self, from_point: QPointF = None, to_point: QPointF = None):
+    def __init__(self, from_point: QPointF = None, to_point: QPointF = None, transit=None):
         super().__init__()
         self.from_point = from_point
         self.to_point = to_point
@@ -74,10 +77,10 @@ class Line(QGraphicsPathItem):
 
         self.pen = QPen(Qt.GlobalColor.cyan)
         self.pen.setWidth(self.width)
-        self.setAcceptHoverEvents(True)
 
         self.z_level = 1
         self.setZValue(self.z_level)
+        self.transit = transit
 
     def get_path(self) -> QPainterPath:
         self.get_path = self.straight_path
@@ -98,9 +101,6 @@ class Line(QGraphicsPathItem):
         path = self.get_path()
         self.setPath(path)
 
-    def hoverMoveEvent(self, event: 'QGraphicsSceneHoverEvent') -> None:
-        super().hoverMoveEvent(event)
-
     def paint(self, painter: QtGui.QPainter, option: 'QStyleOptionGraphicsItem',
               widget: typing.Optional[QWidget] = ...) -> None:
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
@@ -114,11 +114,16 @@ class Line(QGraphicsPathItem):
         shape = qp.createStroke(self.path())
         return shape
 
+    def contextMenuEvent(self, event: 'QGraphicsSceneContextMenuEvent') -> None:
+        self.transit.menu_pos = event.pos() if self.transit.custom_map is None else self.transit.custom_map(event.pos())
+        self.transit.menu.exec(QPoint(int(event.screenPos().x()), int(event.screenPos().y())))
+        event.accept()
 
+
+@SimpleWidgetWithMenu
 class TransitUI:
     @dataclass
     class TransitUIParams:
-        # self, point, scene, state, create_transit_callback, update_transit_callback
         point: QPointF
         scene: QGraphicsScene
         state: typing.Any
@@ -126,7 +131,7 @@ class TransitUI:
         update_transit_callback: typing.Callable = None
 
     def __init__(self, params: TransitUIParams):
-        self.path = Line(params.point, params.point)
+        self.path = Line(params.point, params.point, self)
         self.end_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.red, self.path.set_to_point, self)
         self.start_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.darkGreen, self.path.set_from_point, self)
 

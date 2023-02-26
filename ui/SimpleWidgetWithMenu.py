@@ -1,6 +1,6 @@
 from functools import partial
 
-from PyQt6.QtWidgets import QMenu
+from PyQt6.QtWidgets import QMenu, QWidget
 
 from utils.KOSTYAWrapper import KostyaWrapper
 
@@ -23,7 +23,8 @@ def SimpleWidgetWithMenu(cls):
             self.initMenu()
 
         def initMenu(self):
-            self.menu = QMenu(self)
+            # self if self is QWidget else None - this string is there to attach it not only to QWidget
+            self.menu = QMenu(self if self is QWidget else None)
             if self.names_with_actions is None or len(self.names_with_actions) == 0:
                 return
             if len(self.names_with_actions[0]) == 3:

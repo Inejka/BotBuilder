@@ -1,3 +1,5 @@
+from PyQt6 import QtGui
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QGraphicsScene, QGraphicsView
 
 from PathFile import Paths
@@ -11,18 +13,13 @@ class BotBuilderWindow(QGraphicsView):
     # todo implement area selection and movement
     def __init__(self):
         super().__init__()
+        self.start_dragging_point = None
         self.init_ui()
         self.transit_thickness = 5
         self.lines_equations = {}
         self.scene_s = QGraphicsScene()
         self.setScene(self.scene_s)
-
-        def f():
-            print("selection changed")
-            self.update()
-            self.scene_s.update()
-
-        self.scene_s.selectionChanged.connect(f)
+        self.is_moving = False
 
     def init_ui(self):
         self.setStyleSheet(get_style(Paths.BotBuilderWindow))
@@ -39,3 +36,31 @@ class BotBuilderWindow(QGraphicsView):
     def contextMenuEvent(self, event):
         super().contextMenuEvent(event)
         return event.isAccepted()
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.MiddleButton and self.itemAt(event.pos()) is None:
+            # todo find why it only works before any interaction with UI
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
+            self.is_moving = True
+            self.start_dragging_point = event.pos()
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        if self.is_moving:
+            event.accept()
+            self.verticalScrollBar().setValue(self.verticalScrollBar().value() - (event.pos() - self.start_dragging_point).y())
+            self.horizontalScrollBar().setValue(
+                self.horizontalScrollBar().value() - (event.pos() - self.start_dragging_point).x())
+            self.start_dragging_point = event.pos()
+            return
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.MiddleButton and self.is_moving:
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+            self.is_moving = False
+            event.accept()
+            return
+        super().mouseReleaseEvent(event)

@@ -134,3 +134,18 @@ class Bot:
         transit = self.__transits[transit_id]
         self.__states[transit.get_from_state_id()].remove_transit(transit)
         self.__transits.pop(transit_id)
+
+    def get_associated_transit_by_state_id(self, state_id) -> dict:
+        to_return = {"starts": [], "ends": []}
+        for transit in self.__transits.values():
+            if transit.get_from_state_id() == state_id:
+                to_return["starts"].append(transit.get_id())
+                continue
+            if transit.get_to_state_id() == state_id:
+                to_return["ends"].append(transit.get_id())
+                continue
+        return to_return
+
+    def remove_state_by_id(self, transit_id) -> None:
+        # it doesn't remove state transit, because it removes StateUIController at moment
+        self.__states.pop(transit_id)

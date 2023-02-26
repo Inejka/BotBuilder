@@ -122,3 +122,6 @@ class StateUI(QFrame):
 
     def get_proxy(self):
         return self.scene_proxy
+
+    def destroy(self):
+        self.scene_control_proxy.scene().removeItem(self.scene_control_proxy)

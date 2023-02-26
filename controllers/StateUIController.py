@@ -23,7 +23,8 @@ class StateUIController:
                                                  self.transit_uis_controller.generate_transit_ui))
         state_ui.set_names_with_actions([("Set start", self.stateUIColorController.set_start_state, state_ui),
                                          ("Add end", self.stateUIColorController.add_end_state, state_ui),
-                                         ("Remove end", self.stateUIColorController.remove_end_state, state_ui)])
+                                         ("Remove end", self.stateUIColorController.remove_end_state, state_ui),
+                                         ("Remove state", self.remove_state, state_ui)])
         self.create_control_proxy_and_bind(builder, point, state_ui)
         self.state_uis[state_id] = state_ui
 
@@ -50,10 +51,8 @@ class StateUIController:
             self.stateUIColorController.paint_end_state(self.state_uis[i])
 
     def clear(self):
-        builder = self.mainWindow.get_bot_builder_window()
         for key, value in self.state_uis.items():
-            value.deleteLater()
-            builder.scene().removeItem(value.get_control_proxy())
+            value.destroy()
         self.state_uis.clear()
 
     def set_transit_uis_controller(self, transit_uis_controller):
@@ -61,3 +60,13 @@ class StateUIController:
 
     def get_state_by_id(self, state_id: str) -> StateUI:
         return self.state_uis[state_id]
+
+    def remove_state(self, state_ui: StateUI) -> None:
+        to_remove = self.bot.get_associated_transit_by_state_id(state_ui.get_state_id())
+        to_remove = [x for x in to_remove["starts"]] + [x for x in to_remove["ends"]]
+        to_remove = [x for x in self.transit_uis_controller.transit_uis.values() if x.get_id() in to_remove]
+        for to_delete_transit in to_remove:
+            self.transit_uis_controller.remove_transit(to_delete_transit)
+        self.bot.remove_state_by_id(state_ui.get_state_id())
+        self.state_uis.pop(state_ui.get_state_id())
+        state_ui.destroy()

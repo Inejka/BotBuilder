@@ -11,13 +11,14 @@ class TransitUIController:
         self.state_uis_controller = None
 
     def create_transit(self, transitUi: TransitUI):
-        transit_name, transit_id = self.bot.create_transit(transitUi.get_from_state_id(), transitUi.get_to_state_id())
-        self.finish_TransitUi_init(transitUi, transit_id, transit_name)
+        transit_name, transit_id, transit_priority = self.bot.create_transit(transitUi.get_from_state_id(), transitUi.get_to_state_id())
+        self.finish_TransitUi_init(transitUi, transit_id, transit_name, transit_priority)
 
     def load_transit(self, load_from):
         transit_id = load_from["transit_id"]
         bot_transit = self.bot.get_transit_by_id(transit_id)
         transit_name = bot_transit.get_name()
+        transit_priority = bot_transit.get_priority()
         from_state_id = bot_transit.get_from_state_id()
         to_state_id = bot_transit.get_to_state_id()
 
@@ -31,10 +32,11 @@ class TransitUIController:
         transitUi.end_circle.bind_to_stateUI(self.state_uis_controller.state_uis[to_state_id])
         transitUi.start_circle.bind_to_stateUI(self.state_uis_controller.state_uis[from_state_id])
 
-        self.finish_TransitUi_init(transitUi, transit_id, transit_name)
+        self.finish_TransitUi_init(transitUi, transit_id, transit_name, transit_priority)
 
-    def finish_TransitUi_init(self, transitUi, transit_id, transit_name):
+    def finish_TransitUi_init(self, transitUi, transit_id, transit_name, transit_priority):
         transitUi.set_name(transit_name)
+        transitUi.set_priority(transit_priority)
         transitUi.set_id(transit_id)
         self.transit_uis[transit_id] = transitUi
 

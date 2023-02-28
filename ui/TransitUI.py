@@ -3,11 +3,12 @@ from dataclasses import dataclass
 
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QPointF, QPoint
-from PyQt6.QtGui import QPen, QBrush, QPainterPath
+from PyQt6.QtGui import QPen, QBrush, QPainterPath, QFont, QIntValidator
 from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsSceneMouseEvent, QGraphicsPathItem, QWidget, \
-    QGraphicsScene
+    QGraphicsScene, QHBoxLayout, QGraphicsProxyWidget, QLineEdit
 
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
+from utils.StrWrapper import StrWrapper
 
 
 class Circle(QGraphicsEllipseItem):
@@ -82,9 +83,42 @@ class Line(QGraphicsPathItem):
         self.setZValue(self.z_level)
         self.transit = transit
 
+        self.name_edit_params = [100, 13]
+        self.priority_edit_params = [20, 13]
+        self.q_line_edit_center = QPointF(self.name_edit_params[0] / 2, self.name_edit_params[1] / 2)
+        self.q_line_edit_z = 3
+        self.qwidget = QWidget()
+        self.name = QLineEdit("Hmmmm?")
+        self.widget_proxy = QGraphicsProxyWidget()
+        self.priority = QLineEdit("00")
+        self.priority.setValidator(QIntValidator())
+
     def get_path(self) -> QPainterPath:
         self.get_path = self.straight_path
         return self.straight_path()
+
+    def init_qwidgets(self):
+
+        main_layout = QHBoxLayout()
+        self.qwidget.setLayout(main_layout)
+        main_layout.addWidget(self.priority)
+        main_layout.addWidget(self.name)
+        self.widget_proxy.setWidget(self.qwidget)
+        self.scene().addItem(self.widget_proxy)
+        self.name.setFont(QFont('Times', 6))
+        self.priority.setFont(QFont('Times', 6))
+
+        self.widget_proxy.hide()
+        self.widget_proxy.setZValue(self.q_line_edit_z)
+
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+        main_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.name.setFixedSize(*self.name_edit_params)
+        self.priority.setFixedSize(*self.priority_edit_params)
+        self.widget_proxy.setTransformOriginPoint(self.q_line_edit_center)
+        self.widget_proxy.setMaximumSize(self.name_edit_params[0] + self.priority_edit_params[0],
+                                         self.name_edit_params[1])
 
     def straight_path(self) -> QPainterPath:
         to_return = QPainterPath(self.from_point)
@@ -93,13 +127,23 @@ class Line(QGraphicsPathItem):
 
     def set_from_point(self, point: QPointF):
         self.from_point = point
-        path = self.get_path()
-        self.setPath(path)
+        self.inner_update()
 
     def set_to_point(self, point: QPointF):
         self.to_point = point
+        self.inner_update()
+
+    def inner_update(self):
         path = self.get_path()
         self.setPath(path)
+        if path.length() > self.name_edit_params[0] * 2:
+            self.widget_proxy.show()
+            angle = path.angleAtPercent(0.5)
+            rot = (360 - angle) if (angle < 90 or angle > 270) else (180 - angle)
+            self.widget_proxy.setRotation(rot)
+            self.widget_proxy.setPos(path.pointAtPercent(0.5) - self.q_line_edit_center)
+        else:
+            self.widget_proxy.hide()
 
     def paint(self, painter: QtGui.QPainter, option: 'QStyleOptionGraphicsItem',
               widget: typing.Optional[QWidget] = ...) -> None:
@@ -141,12 +185,14 @@ class TransitUI:
         self.is_created = False
 
         params.scene.addItem(self.path)
+        self.path.init_qwidgets()
         params.scene.addItem(self.end_circle)
         params.scene.addItem(self.start_circle)
 
         self.create_transit_callback = params.create_transit_callback
         self.update_transit_callback = params.update_transit_callback
         self.name = None
+        self.priority = None
         self.transit_id = None
 
     def to_json(self):
@@ -160,6 +206,7 @@ class TransitUI:
         return to_return
 
     def destroy(self):
+        self.path.scene().removeItem(self.path.widget_proxy)
         self.path.scene().removeItem(self.path)
         # if because transitUi is cleared first, and it removes it child
         if self.end_circle.scene():
@@ -185,6 +232,22 @@ class TransitUI:
 
     def set_name(self, name):
         self.name = name
+        self.path.name.setText(name.get())
+        self.path.name.editingFinished.connect(self.update_name_from_ui)
+
+    def update_name_from_ui(self):
+        self.name.set_str(self.path.name.text())
 
     def get_id(self):
         return self.transit_id
+
+    def get_name(self) -> StrWrapper:
+        return self.name
+
+    def set_priority(self, priority):
+        self.priority = priority
+        self.path.priority.setText(str(priority.get()))
+        self.path.priority.editingFinished.connect(self.update_priority_from_ui)
+
+    def update_priority_from_ui(self):
+        self.priority.set_int(int(self.path.priority.text()))

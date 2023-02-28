@@ -29,7 +29,7 @@ class Bot:
         self.__transits[transit.get_id()] = transit
         self.__transit_counter += 1
         self.__states[from_state_id].add_transit(transit)
-        return transit.get_name(), transit.get_id()
+        return transit.get_name(), transit.get_id(), transit.get_priority()
 
     def set_start_state(self, start_state_id: str) -> None:
         self.__start_state = self.__states[start_state_id]

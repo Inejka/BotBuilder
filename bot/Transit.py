@@ -1,6 +1,7 @@
 import json
 
 from bot.WithAssociatedFile import WithAssociatedFile
+from utils.IntWrapper import IntWrapper
 from utils.StrWrapper import StrWrapper
 
 
@@ -11,7 +12,7 @@ class Transit:
         self.__name = StrWrapper("Transit" + str(inner_id))
         self.__to_state = to_state
         self.__from_state = from_state
-        self.__priority = priority
+        self.__priority = IntWrapper(priority)
 
     def set_name(self, name: str) -> None:
         self.__name.set_str(name)
@@ -43,3 +44,6 @@ class Transit:
 
     def set_from_state(self, state):
         self.__from_state = state
+
+    def get_priority(self) -> IntWrapper:
+        return self.__priority

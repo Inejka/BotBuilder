@@ -1,6 +1,7 @@
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QGraphicsScene, QGraphicsView
+from PyQt6.QtCore import QPoint, QPointF, Qt
+from PyQt6.QtGui import QContextMenuEvent
+from PyQt6.QtWidgets import QGraphicsItem, QGraphicsProxyWidget, QGraphicsScene, QGraphicsView, QWidget
 
 from PathFile import Paths
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
@@ -9,7 +10,7 @@ from utils.GetStyleFromFile import get_style
 
 @SimpleWidgetWithMenu
 class BotBuilderWindow(QGraphicsView):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.start_dragging_point = None
         self.init_ui()
@@ -23,19 +24,19 @@ class BotBuilderWindow(QGraphicsView):
         self.zoom_in_factor = 1.3
         self.zoom_out_factor = 1 / self.zoom_in_factor
 
-    def init_ui(self):
+    def init_ui(self) -> None:
         self.setStyleSheet(get_style(Paths.BotBuilderWindow))
 
-    def add_item(self, item):
+    def add_item(self, item: QGraphicsItem) -> None:
         self.scene().addItem(item)
 
-    def add_widget(self, widget):
+    def add_widget(self, widget: QWidget) -> QGraphicsProxyWidget:
         return self.scene().addWidget(widget)
 
-    def custom_map(self, point):
+    def custom_map(self, point: QPoint) -> QPointF:
         return self.mapToScene(point)
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event: QContextMenuEvent) -> bool:
         super().contextMenuEvent(event)
         return event.isAccepted()
 
@@ -69,8 +70,5 @@ class BotBuilderWindow(QGraphicsView):
         super().mouseReleaseEvent(event)
 
     def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
-        if event.angleDelta().y() > 0:
-            zoom_factor = self.zoom_in_factor
-        else:
-            zoom_factor = self.zoom_out_factor
+        zoom_factor = self.zoom_in_factor if event.angleDelta().y() > 0 else self.zoom_out_factor
         self.scale(zoom_factor, zoom_factor)

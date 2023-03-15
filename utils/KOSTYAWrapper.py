@@ -1,6 +1,9 @@
-def KostyaWrapper(cls):
+import typing
+
+
+def KostyaWrapper(cls: typing.Any) -> "Wrapper":
     class Wrapper(cls):
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
             if len(args) == 0:
                 super(cls, self).__init__()
             if len(args) == 1:

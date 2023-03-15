@@ -1,15 +1,16 @@
 import json
 import os
-from typing import List
+from pathlib import Path
 
 from PathFile import Paths
 from bot.State import State
 from bot.Transit import Transit
+from utils.IntWrapper import IntWrapper
 from utils.StrWrapper import StrWrapper
 
 
 class Bot:
-    def __init__(self):
+    def __init__(self) -> None:
         self.__states = {}
         self.__transits = {}
         self.__state_counter = 0
@@ -17,13 +18,13 @@ class Bot:
         self.__start_state = None
         self.__end_states = {}
 
-    def create_state(self):
+    def create_state(self) -> (StrWrapper, str):
         state = State(self.__state_counter)
         self.__states[state.get_id()] = state
         self.__state_counter += 1
         return state.get_name(), state.get_id()
 
-    def create_transit(self, from_state_id: str, to_state_id: str):
+    def create_transit(self, from_state_id: str, to_state_id: str) -> (StrWrapper, str, IntWrapper):
         transit = Transit(self.__transit_counter, self.__states[from_state_id], self.__states[to_state_id],
                           self.__states[from_state_id].get_transits_count())
         self.__transits[transit.get_id()] = transit
@@ -40,7 +41,7 @@ class Bot:
     def add_end_state(self, end_state_id: str) -> None:
         self.__end_states[end_state_id] = self.__states[end_state_id]
 
-    def get_end_states(self) -> List:
+    def get_end_states(self) -> list:
         return list(self.__end_states.keys())
 
     def remove_end_state(self, end_state_id: str) -> None:
@@ -54,7 +55,7 @@ class Bot:
     def is_end_state(self, end_state_id: str) -> bool:
         return end_state_id in self.__end_states
 
-    def clear(self):
+    def clear(self) -> None:
         self.__states = {}
         self.__transits = {}
         self.__state_counter = 0
@@ -62,11 +63,11 @@ class Bot:
         self.__start_state = None
         self.__end_states = {}
 
-    def save(self):
-        with open(os.path.join(Paths.BotGeneratedFolder, "bot.json"), 'w') as file:
+    def save(self) -> None:
+        with Path(os.path.join(Paths.BotGeneratedFolder, "bot.json")).open("w") as file:
             json.dump(self, file, default=Bot.to_json, indent=4)
 
-    def to_json(self):
+    def to_json(self) -> None:
         # json loads for bot serialization for not to return a str
         # todo find way to remove json loads
         to_return = "{"
@@ -80,11 +81,11 @@ class Bot:
         to_return += "}"
         return json.loads(to_return)
 
-    def load(self):
-        with open(os.path.join(Paths.BotGeneratedFolder, "bot.json"), 'r') as file:
+    def load(self) -> None:
+        with open(os.path.join(Paths.BotGeneratedFolder, "bot.json")) as file:
             self.from_json(json.load(file))
 
-    def from_json(self, json_parsed):
+    def from_json(self, json_parsed: dict) -> None:
         # todo remove unnecessary information from json such as:
         # bot->states->transits
         # bot->states from dict to list
@@ -98,13 +99,13 @@ class Bot:
             self.load_transit(transit)
         self.load_start_end_states(json_parsed["start_state"], json_parsed["end_states"])
 
-    def load_state(self, load_from):
+    def load_state(self, load_from: dict) -> None:
         state = State(load_from["id"][load_from["id"].rfind("_") + 1:])
         state.set_name(load_from["name"])
         state.set_associated_file(load_from["associated_file_path"])
         self.__states[load_from["id"]] = state
 
-    def load_transit(self, load_from):
+    def load_transit(self, load_from: dict) -> None:
         transit = Transit(load_from["inner_id"][load_from["inner_id"].rfind("_") + 1:],
                           self.__states[load_from["from_state"]],
                           self.__states[load_from["to_state"]], load_from["priority"])
@@ -113,29 +114,29 @@ class Bot:
         self.__transits[transit.get_id()] = transit
         self.__states[load_from["from_state"]].add_transit(transit)
 
-    def load_start_end_states(self, start_state_id, end_states):
-        self.__start_state = self.__states[start_state_id] if not start_state_id == "None" else None
+    def load_start_end_states(self, start_state_id: str, end_states: dict) -> None:
+        self.__start_state = self.__states[start_state_id] if start_state_id != "None" else None
         for _, i in end_states.items():
             self.__end_states[i] = self.__states[i]
 
-    def get_name_wrapper_by_state_id(self, state_id) -> StrWrapper:
+    def get_name_wrapper_by_state_id(self, state_id: str) -> StrWrapper:
         return self.__states[state_id].get_name()
 
-    def get_name_wrapper_by_transit_id(self, transit_id) -> StrWrapper:
+    def get_name_wrapper_by_transit_id(self, transit_id: str) -> StrWrapper:
         return self.__transits[transit_id].get_name()
 
-    def get_transit_by_id(self, transit_id) -> Transit:
+    def get_transit_by_id(self, transit_id: str) -> Transit:
         return self.__transits[transit_id]
 
-    def get_state_by_id(self, state_id) -> State:
+    def get_state_by_id(self, state_id: str) -> State:
         return self.__states[state_id]
 
-    def remove_transit_by_id(self, transit_id) -> None:
+    def remove_transit_by_id(self, transit_id: str) -> None:
         transit = self.__transits[transit_id]
         self.__states[transit.get_from_state_id()].remove_transit(transit)
         self.__transits.pop(transit_id)
 
-    def get_associated_transit_by_state_id(self, state_id) -> dict:
+    def get_associated_transit_by_state_id(self, state_id: str) -> dict:
         to_return = {"starts": [], "ends": []}
         for transit in self.__transits.values():
             if transit.get_from_state_id() == state_id:
@@ -146,6 +147,6 @@ class Bot:
                 continue
         return to_return
 
-    def remove_state_by_id(self, transit_id) -> None:
+    def remove_state_by_id(self, transit_id: str) -> None:
         # it doesn't remove state transit, because it removes StateUIController at moment
         self.__states.pop(transit_id)

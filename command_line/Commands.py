@@ -1,3 +1,8 @@
+from PyQt6.QtWidgets import QApplication
+
+from ui.CommandLine import CommandLineOutput
+
+
 class Command:
     def get_command_name(self) -> str:
         pass
@@ -8,7 +13,7 @@ class Command:
 
 class HiCommand(Command):
 
-    def __init__(self, command_line_output):
+    def __init__(self, command_line_output: CommandLineOutput) -> None:
         self.command_line_output = command_line_output
 
     def get_command_name(self) -> str:
@@ -20,7 +25,7 @@ class HiCommand(Command):
 
 class CloseCommand(Command):
 
-    def __init__(self, to_close):
+    def __init__(self, to_close: QApplication) -> None:
         self.to_close = to_close
 
     def get_command_name(self) -> str:

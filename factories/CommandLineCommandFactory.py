@@ -1,4 +1,4 @@
-from command_line.Commands import *
+from command_line.Commands import CloseCommand, Command, HiCommand
 from controllers import MainController
 
 

@@ -1,3 +1,3 @@
-def get_style(path):
-    with open(path, 'r', encoding="utf-8") as file:
+def get_style(path: str) -> str:
+    with open(path, encoding="utf-8") as file:
         return file.read()

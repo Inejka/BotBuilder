@@ -4,7 +4,7 @@ from factories.CommandLineCommandFactory import create_command
 
 
 class CommandLineController:
-    def __init__(self, main_controller: MainController):
+    def __init__(self, main_controller: MainController) -> None:
         self.commands = {}
         for cls in Command.__subclasses__():
             command = create_command(cls.__name__, main_controller)

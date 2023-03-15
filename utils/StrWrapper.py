@@ -1,15 +1,13 @@
 class StrWrapper:
-    def __init__(self):
-        self.__inner = ""
 
-    def __init__(self, init_with):
+    def __init__(self, init_with: str) -> None:
         self.__inner = init_with
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__inner
 
-    def set_str(self, inner):
+    def set_str(self, inner: str) -> None:
         self.__inner = inner
 
-    def get(self):
+    def get(self) -> str:
         return self.__inner

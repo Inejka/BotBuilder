@@ -8,7 +8,7 @@ from utils.GetStyleFromFile import get_style
 
 
 class CentralWidget(QSplitter):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setStyleSheet(get_style(Paths.CentralWidget))
         self.bot_builder_window = BotBuilderWindow()

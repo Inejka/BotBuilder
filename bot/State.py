@@ -7,7 +7,7 @@ from utils.StrWrapper import StrWrapper
 
 @WithAssociatedFile
 class State:
-    def __init__(self, inner_id):
+    def __init__(self, inner_id: int) -> None:
         self.__id = "state_" + str(inner_id)
         self.__name = StrWrapper("State" + str(inner_id))
         self.__transits = []
@@ -21,23 +21,23 @@ class State:
     def get_transits_count(self) -> int:
         return len(self.__transits)
 
-    def add_transit(self, transit: Transit):
+    def add_transit(self, transit: Transit) -> None:
         self.__transits.append(transit)
 
     def set_name(self, name: str) -> None:
         self.__name.set_str(name)
 
-    def set_id(self, id: str) -> None:
-        self.__id = id
+    def set_id(self, inner_id: str) -> None:
+        self.__id = inner_id
 
-    def to_json(self):
+    def to_json(self) -> dict:
         # json loads for bot serialization for not to return a str
         # todo find way to remove json loads
         transits = [f.get_id() for f in self.__transits]
         return json.loads(
             '{"id":"' + self.__id + '","name":"' + self.__name.get() + '","transits":' +
-            str(transits).replace("'", '"') + ',"associated_file_path":"' + self.get_associated_file().replace("\\",
-                                                                                                               "\\\\") + '"}')
+            str(transits).replace("'", '"') + ',"associated_file_path":"' +
+            self.get_associated_file().replace("\\", "\\\\") + '"}')
 
     def remove_transit(self, transit: Transit) -> None:
         self.__transits.remove(transit)

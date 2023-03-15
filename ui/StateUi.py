@@ -3,10 +3,18 @@ import typing
 from dataclasses import dataclass
 
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QPointF, QPoint
-from PyQt6.QtGui import QPen, QBrush
-from PyQt6.QtWidgets import QLineEdit, QVBoxLayout, QFrame, QGraphicsRectItem, QGraphicsItem, \
-    QGraphicsSceneContextMenuEvent, QGraphicsSceneMouseEvent, QGraphicsProxyWidget
+from PyQt6.QtCore import QPoint, QPointF, Qt
+from PyQt6.QtGui import QBrush, QPen
+from PyQt6.QtWidgets import (
+    QFrame,
+    QGraphicsItem,
+    QGraphicsProxyWidget,
+    QGraphicsRectItem,
+    QGraphicsSceneContextMenuEvent,
+    QGraphicsSceneMouseEvent,
+    QLineEdit,
+    QVBoxLayout,
+)
 
 from PathFile import Paths
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
@@ -16,7 +24,7 @@ from utils.StrWrapper import StrWrapper
 
 
 class StateUIProxy(QGraphicsProxyWidget):
-    def __init__(self, state_ui):
+    def __init__(self, state_ui: "StateUI") -> None:
         super().__init__()
         self.state_ui = state_ui
         self.setWidget(state_ui)
@@ -28,7 +36,7 @@ class StateUIProxy(QGraphicsProxyWidget):
             self.state_ui.recent_transit_ui.end_circle.mousePressEvent(event)
             event.accept()
 
-    def get_state_ui(self):
+    def get_state_ui(self) -> "StateUI":
         return self.state_ui
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
@@ -39,7 +47,7 @@ class StateUIProxy(QGraphicsProxyWidget):
 
 
 class ControlRectangle(QGraphicsRectItem):
-    def __init__(self, w, state_ui, h=10):
+    def __init__(self, w: int, state_ui: "StateUI", h: int = 10) -> None:
         super().__init__(0, 0, w, h)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
@@ -63,7 +71,7 @@ class StateUI(QFrame):
         try_open_editor_callback: typing.Callable
         generate_transit_callback: typing.Callable
 
-    def __init__(self, params: StateUIParams):
+    def __init__(self, params: StateUIParams) -> None:
         super().__init__()
         self.scene_control_proxy = None
         self.scene_proxy = None
@@ -76,7 +84,7 @@ class StateUI(QFrame):
         self.recent_transit_ui = None
         self.init_ui()
 
-    def init_ui(self):
+    def init_ui(self) -> None:
         self.layout = QVBoxLayout()
         self.state_name_input = QLineEdit()
         self.state_name_input.mouseDoubleClickEvent = self.mouseDoubleClickEvent
@@ -86,10 +94,10 @@ class StateUI(QFrame):
         self.state_name_input.setText(self.state_name.get())
         self.setStyleSheet(get_style(Paths.StateUI))
 
-    def get_state_id(self):
+    def get_state_id(self) -> str:
         return self.state_id
 
-    def edit_state_name_reaction(self):
+    def edit_state_name_reaction(self) -> None:
         self.state_name.set_str(self.state_name_input.text())
 
     def mousePressEvent(self, mouse_event: QtGui.QMouseEvent) -> None:
@@ -103,7 +111,7 @@ class StateUI(QFrame):
         if mouse_event.button() == Qt.MouseButton.LeftButton:
             self.try_open_editor_callback(self.state_id)
 
-    def to_json(self):
+    def to_json(self) -> dict:
         # json loads for bot serialization for not to return a str
         # todo find way to remove json loads
         to_return = "{"
@@ -113,15 +121,15 @@ class StateUI(QFrame):
         to_return += "}"
         return json.loads(to_return)
 
-    def bind_proxies(self, control_proxy, proxy):
+    def bind_proxies(self, control_proxy: ControlRectangle, proxy: StateUIProxy) -> None:
         self.scene_control_proxy = control_proxy
         self.scene_proxy = proxy
 
-    def get_control_proxy(self):
+    def get_control_proxy(self) -> ControlRectangle:
         return self.scene_control_proxy
 
-    def get_proxy(self):
+    def get_proxy(self) -> StateUIProxy:
         return self.scene_proxy
 
-    def destroy(self):
+    def destroy(self) -> None:
         self.scene_control_proxy.scene().removeItem(self.scene_control_proxy)

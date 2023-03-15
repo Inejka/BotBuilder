@@ -2,17 +2,31 @@ import typing
 from dataclasses import dataclass
 
 from PyQt6 import QtCore, QtGui
-from PyQt6.QtCore import Qt, QPointF, QPoint
-from PyQt6.QtGui import QPen, QBrush, QPainterPath, QFont, QIntValidator
-from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsSceneMouseEvent, QGraphicsPathItem, QWidget, \
-    QGraphicsScene, QHBoxLayout, QGraphicsProxyWidget, QLineEdit
+from PyQt6.QtCore import QPoint, QPointF, Qt
+from PyQt6.QtGui import QBrush, QFont, QIntValidator, QPainterPath, QPen
+from PyQt6.QtWidgets import (
+    QGraphicsEllipseItem,
+    QGraphicsItem,
+    QGraphicsPathItem,
+    QGraphicsProxyWidget,
+    QGraphicsScene,
+    QGraphicsSceneContextMenuEvent,
+    QGraphicsSceneMouseEvent,
+    QHBoxLayout,
+    QLineEdit,
+    QStyleOptionGraphicsItem,
+    QWidget,
+)
 
+from ui import StateUi
 from ui.SimpleWidgetWithMenu import SimpleWidgetWithMenu
+from utils.IntWrapper import IntWrapper
 from utils.StrWrapper import StrWrapper
 
 
 class Circle(QGraphicsEllipseItem):
-    def __init__(self, x, y, w, h, color: Qt.GlobalColor, move_callback, transit):
+    def __init__(self, x: int, y: int, w: int, h: int, color: Qt.GlobalColor, move_callback: typing.Callable,
+                 transit: "TransitUI") -> None:
         super().__init__(x, y, w, h)
         self.start_mouse_click_position = None
         self.offset = None
@@ -30,7 +44,7 @@ class Circle(QGraphicsEllipseItem):
         self.z_level = 2
         self.setZValue(self.z_level)
 
-    def mousePressEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
+    def mousePressEvent(self, event: "QGraphicsSceneMouseEvent") -> None:
         self.scene().clearSelection()
         self.start_mouse_click_position = self.pos()
         super().mousePressEvent(event)
@@ -41,8 +55,8 @@ class Circle(QGraphicsEllipseItem):
             if item.__class__.__name__ == "StateUIProxy":
                 self.bind_to_stateUI(item.get_state_ui())
                 founded_state_to_bind = True
-                # after creation of transit i force input to end_circle, so it's mouseReleaseEvent will be fired first
-                # thats, if i found StateUiProxy, i bind end_circle to it and assume that transit created
+                # after creation of transit I force input to end_circle, so it's mouseReleaseEvent will be fired first
+                # that, if I found StateUiProxy, I bind end_circle to it and assume that transit created
                 self.transit.update_transit()
         if not founded_state_to_bind:
             self.setPos(self.start_mouse_click_position)
@@ -51,26 +65,29 @@ class Circle(QGraphicsEllipseItem):
         if not founded_state_to_bind and not self.transit.is_created:
             self.transit.destroy()
 
-    def get_center(self):
+    def get_center(self) -> QPointF:
         return self.scenePos() + self.center_point
 
-    def itemChange(self, change: 'QGraphicsItem.GraphicsItemChange', value: typing.Any) -> typing.Any:
+    def itemChange(self, change: "QGraphicsItem.GraphicsItemChange", value: typing.Any) -> typing.Any:
         if change == QGraphicsItem.GraphicsItemChange.ItemScenePositionHasChanged:
             self.move_callback(self.get_center())
         return super().itemChange(change, value)
 
-    def bind_to_stateUI(self, state) -> None:
-        scenePos = self.scenePos()
+    def bind_to_stateUI(self, state: StateUi) -> None:
+        scene_pos = self.scenePos()
         self.setParentItem(state.get_proxy())
-        self.setPos(scenePos - state.get_proxy().scenePos())
+        self.setPos(scene_pos - state.get_proxy().scenePos())
         self.state_id = state.get_state_id()
 
-    def get_state_id(self):
+    def get_state_id(self) -> str:
         return self.state_id
+
+    def mouseDoubleClickEvent(self, event: "QGraphicsSceneMouseEvent") -> None:
+        print("nan")
 
 
 class Line(QGraphicsPathItem):
-    def __init__(self, from_point: QPointF = None, to_point: QPointF = None, transit=None):
+    def __init__(self, from_point: QPointF = None, to_point: QPointF = None, transit: "TransitUI" = None) -> None:
         super().__init__()
         self.from_point = from_point
         self.to_point = to_point
@@ -97,7 +114,7 @@ class Line(QGraphicsPathItem):
         self.get_path = self.straight_path
         return self.straight_path()
 
-    def init_qwidgets(self):
+    def init_qwidgets(self) -> None:
 
         main_layout = QHBoxLayout()
         self.qwidget.setLayout(main_layout)
@@ -105,8 +122,8 @@ class Line(QGraphicsPathItem):
         main_layout.addWidget(self.name)
         self.widget_proxy.setWidget(self.qwidget)
         self.scene().addItem(self.widget_proxy)
-        self.name.setFont(QFont('Times', 6))
-        self.priority.setFont(QFont('Times', 6))
+        self.name.setFont(QFont("Times", 6))
+        self.priority.setFont(QFont("Times", 6))
 
         self.widget_proxy.hide()
         self.widget_proxy.setZValue(self.q_line_edit_z)
@@ -125,15 +142,15 @@ class Line(QGraphicsPathItem):
         to_return.lineTo(self.to_point)
         return to_return
 
-    def set_from_point(self, point: QPointF):
+    def set_from_point(self, point: QPointF) -> None:
         self.from_point = point
         self.inner_update()
 
-    def set_to_point(self, point: QPointF):
+    def set_to_point(self, point: QPointF) -> None:
         self.to_point = point
         self.inner_update()
 
-    def inner_update(self):
+    def inner_update(self) -> None:
         path = self.get_path()
         self.setPath(path)
         if path.length() > self.name_edit_params[0] * 2:
@@ -145,8 +162,8 @@ class Line(QGraphicsPathItem):
         else:
             self.widget_proxy.hide()
 
-    def paint(self, painter: QtGui.QPainter, option: 'QStyleOptionGraphicsItem',
-              widget: typing.Optional[QWidget] = ...) -> None:
+    def paint(self, painter: QtGui.QPainter, option: "QStyleOptionGraphicsItem",
+              widget: QWidget | None = ...) -> None:
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         painter.setPen(self.pen)
         painter.drawPath(self.path())
@@ -155,10 +172,9 @@ class Line(QGraphicsPathItem):
         qp = QtGui.QPainterPathStroker()
         qp.setWidth(self.width)
         qp.setCapStyle(QtCore.Qt.PenCapStyle.SquareCap)
-        shape = qp.createStroke(self.path())
-        return shape
+        return qp.createStroke(self.path())
 
-    def contextMenuEvent(self, event: 'QGraphicsSceneContextMenuEvent') -> None:
+    def contextMenuEvent(self, event: "QGraphicsSceneContextMenuEvent") -> None:
         self.transit.menu_pos = event.pos() if self.transit.custom_map is None else self.transit.custom_map(event.pos())
         self.transit.menu.exec(QPoint(int(event.screenPos().x()), int(event.screenPos().y())))
         event.accept()
@@ -174,7 +190,7 @@ class TransitUI:
         create_transit_callback: typing.Callable = None
         update_transit_callback: typing.Callable = None
 
-    def __init__(self, params: TransitUIParams):
+    def __init__(self, params: TransitUIParams) -> None:
         self.path = Line(params.point, params.point, self)
         self.end_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.red, self.path.set_to_point, self)
         self.start_circle = Circle(0, 0, 10, 10, Qt.GlobalColor.darkGreen, self.path.set_from_point, self)
@@ -195,7 +211,7 @@ class TransitUI:
         self.priority = None
         self.transit_id = None
 
-    def to_json(self):
+    def to_json(self) -> dict:
         to_return = {}
         to_return["transit_id"] = self.transit_id
         to_return["transit_name"] = self.name.get()
@@ -205,7 +221,7 @@ class TransitUI:
                                   "y": self.end_circle.scenePos().y()}
         return to_return
 
-    def destroy(self):
+    def destroy(self) -> None:
         self.path.scene().removeItem(self.path.widget_proxy)
         self.path.scene().removeItem(self.path)
         # if because transitUi is cleared first, and it removes it child
@@ -214,40 +230,40 @@ class TransitUI:
         if self.start_circle.scene():
             self.start_circle.scene().removeItem(self.start_circle)
 
-    def update_transit(self):
+    def update_transit(self) -> None:
         if not self.is_created:
             self.is_created = True
             self.create_transit_callback(self)
         else:
             self.update_transit_callback(self)
 
-    def get_from_state_id(self):
+    def get_from_state_id(self) -> str:
         return self.start_circle.get_state_id()
 
-    def get_to_state_id(self):
+    def get_to_state_id(self) -> str:
         return self.end_circle.get_state_id()
 
-    def set_id(self, id):
-        self.transit_id = id
+    def set_id(self, inner_id: str) -> None:
+        self.transit_id = inner_id
 
-    def set_name(self, name):
+    def set_name(self, name: StrWrapper) -> None:
         self.name = name
         self.path.name.setText(name.get())
         self.path.name.editingFinished.connect(self.update_name_from_ui)
 
-    def update_name_from_ui(self):
+    def update_name_from_ui(self) -> None:
         self.name.set_str(self.path.name.text())
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self.transit_id
 
     def get_name(self) -> StrWrapper:
         return self.name
 
-    def set_priority(self, priority):
+    def set_priority(self, priority: IntWrapper) -> None:
         self.priority = priority
         self.path.priority.setText(str(priority.get()))
         self.path.priority.editingFinished.connect(self.update_priority_from_ui)
 
-    def update_priority_from_ui(self):
+    def update_priority_from_ui(self) -> None:
         self.priority.set_int(int(self.path.priority.text()))

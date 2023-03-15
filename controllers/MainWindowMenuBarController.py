@@ -10,53 +10,53 @@ from utils.GetStyleFromFile import get_style
 
 
 class MainWindowMenuBarController:
-    def __init__(self, bot: Bot, mainWindow: MainWindow, uiController):
+    def __init__(self, bot: Bot, mainWindow: MainWindow, ui_controller: "UIController") -> None:
         self.bot = bot
         self.mainWindow = mainWindow
-        self.uiController = uiController
+        self.uiController = ui_controller
         self.init_menu_bar()
 
-    def init_menu_bar(self):
-        menuBar = self.mainWindow.menuBar()
-        menuBar.setStyleSheet(get_style(Paths.MainWindowMenuBar))
-        fileMenu = menuBar.addMenu('&File')
+    def init_menu_bar(self) -> None:
+        menu_bar = self.mainWindow.menuBar()
+        menu_bar.setStyleSheet(get_style(Paths.MainWindowMenuBar))
+        file_menu = menu_bar.addMenu("&File")
 
-        selectFolderAction = QAction("Select working folder", self.mainWindow)
-        selectFolderAction.triggered.connect(self.select_folder)
+        select_folder_action = QAction("Select working folder", self.mainWindow)
+        select_folder_action.triggered.connect(self.select_folder)
 
-        clearAction = QAction("Clear", self.mainWindow)
-        clearAction.triggered.connect(self.clear)
-        clearAction.setShortcut("Ctrl+r")
+        clear_action = QAction("Clear", self.mainWindow)
+        clear_action.triggered.connect(self.clear)
+        clear_action.setShortcut("Ctrl+r")
 
-        saveAction = QAction("Save", self.mainWindow)
-        saveAction.triggered.connect(self.save)
-        saveAction.setShortcut("Ctrl+s")
+        save_action = QAction("Save", self.mainWindow)
+        save_action.triggered.connect(self.save)
+        save_action.setShortcut("Ctrl+s")
 
-        loadAction = QAction("Load", self.mainWindow)
-        loadAction.triggered.connect(self.load)
-        loadAction.setShortcut("Ctrl+o")
+        load_action = QAction("Load", self.mainWindow)
+        load_action.triggered.connect(self.load)
+        load_action.setShortcut("Ctrl+o")
 
-        fileMenu.addAction(selectFolderAction)
-        fileMenu.addAction(saveAction)
-        fileMenu.addAction(loadAction)
-        fileMenu.addAction(clearAction)
+        file_menu.addAction(select_folder_action)
+        file_menu.addAction(save_action)
+        file_menu.addAction(load_action)
+        file_menu.addAction(clear_action)
 
-    def clear(self):
+    def clear(self) -> None:
         self.bot.clear()
         self.uiController.clear()
 
-    def select_folder(self):
+    def select_folder(self) -> None:
         file = QFileDialog.getExistingDirectory(self.mainWindow, "Select Directory",
                                                 os.path.abspath(Paths.BotGeneratedFolder))
         if file:
             # self.clear()
             Paths.BotGeneratedFolder = file
 
-    def save(self):
+    def save(self) -> None:
         self.bot.save()
         self.uiController.save()
 
-    def load(self):
+    def load(self) -> None:
         self.clear()
         self.bot.load()
         self.uiController.load()

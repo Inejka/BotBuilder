@@ -48,3 +48,11 @@ class Transit:
 
     def get_priority(self) -> IntWrapper:
         return self.__priority
+
+    def get_template_body(self) -> str:
+        return """import typing
+
+
+def execute(data: typing.Any) -> bool:
+    raise NotImplementedError
+        """

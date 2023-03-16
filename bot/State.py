@@ -41,3 +41,13 @@ class State:
 
     def remove_transit(self, transit: Transit) -> None:
         self.__transits.remove(transit)
+
+    def get_template_body(self) -> str:
+        return """import typing
+
+
+def execute(data: typing.Any) -> None:
+    raise NotImplementedError
+        """
+
+

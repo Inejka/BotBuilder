@@ -15,8 +15,8 @@ def WithAssociatedFile(cls: typing.Any) -> "Wrapper":
         def create_associated_file_if_not_exists(self) -> None:
             self.__associated_file_path = os.path.join(Paths.BotGeneratedFolder, self.get_id() + ".py")
             if not os.path.exists(self.__associated_file_path):
-                with open(self.__associated_file_path, "w") as _:
-                    pass
+                with open(self.__associated_file_path, "w") as file:
+                    file.write(self.get_template_body())
 
         def get_associated_file(self) -> str:
             return self.__associated_file_path

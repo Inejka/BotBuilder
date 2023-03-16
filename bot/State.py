@@ -42,6 +42,12 @@ class State:
     def remove_transit(self, transit: Transit) -> None:
         self.__transits.remove(transit)
 
+    def sort_transits_by_priority(self) -> None:
+        self.__transits.sort(key=lambda x: x.get_priority().get(), reverse=True)
+
+    def get_transits(self) -> list[Transit]:
+        return self.__transits
+
     def get_template_body(self) -> str:
         return """import typing
 
@@ -49,5 +55,3 @@ class State:
 def execute(data: typing.Any) -> None:
     raise NotImplementedError
         """
-
-

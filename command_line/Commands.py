@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QApplication
 
+from bot.Bot import Bot
 from ui.CommandLine import CommandLineOutput
 
 
@@ -33,3 +34,27 @@ class CloseCommand(Command):
 
     def exec(self) -> None:
         self.to_close.closeAllWindows()
+
+
+class RunCommand(Command):
+
+    def __init__(self, bot: Bot) -> None:
+        self.bot = bot
+
+    def get_command_name(self) -> str:
+        return "run"
+
+    def exec(self) -> None:
+        self.bot.run()
+
+
+class StopCommand(Command):
+
+    def __init__(self, bot: Bot) -> None:
+        self.bot = bot
+
+    def get_command_name(self) -> str:
+        return "stop"
+
+    def exec(self) -> None:
+        self.bot.force_stop()

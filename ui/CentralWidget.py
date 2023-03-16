@@ -15,7 +15,8 @@ class CentralWidget(QSplitter):
         self.command_line = CommandLine()
         self.setOrientation(Qt.Orientation.Vertical)
         self.addWidget(self.bot_builder_window)
-        # self.addWidget(self.command_line)
+        self.addWidget(self.command_line)
+        self.setSizes([500,100])
 
     def get_bot_builder_window(self) -> BotBuilderWindow:
         return self.bot_builder_window

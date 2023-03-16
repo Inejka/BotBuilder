@@ -1,16 +1,19 @@
 import json
 import os
+import types
 from pathlib import Path
 
-from PathFile import Paths
 from bot.State import State
 from bot.Transit import Transit
+from PathFile import Paths
 from utils.IntWrapper import IntWrapper
+from utils.StoppableThread import StoppableThread
 from utils.StrWrapper import StrWrapper
 
 
 class Bot:
     def __init__(self) -> None:
+        self.running_thread = None
         self.__states = {}
         self.__transits = {}
         self.__state_counter = 0
@@ -150,3 +153,38 @@ class Bot:
     def remove_state_by_id(self, transit_id: str) -> None:
         # it doesn't remove state transit, because it removes StateUIController at moment
         self.__states.pop(transit_id)
+
+    def run(self) -> None:
+        self.prepare_for_running()
+
+        self.running_thread = StoppableThread(target=self.thead_run_func, args=())
+        self.running_thread.start()
+
+    def prepare_for_running(self) -> None:
+        for state in self.__states.values():
+            state.load_from_file()
+            state.sort_transits_by_priority()
+        for transit in self.__transits.values():
+            transit.load_from_file()
+
+    def thead_run_func(self) -> None:
+        current_state = self.__start_state
+        data = types.SimpleNamespace()
+        while True:
+            # to force stop running thread, cause standard library doesn't have stop builtin for no fucking reason
+            if self.running_thread.stopped():
+                break
+
+            current_state.execute(data)
+
+            if current_state.get_id() in self.__end_states:
+                break
+
+            for i in current_state.get_transits():
+                if i.execute(data):
+                    current_state = i.get_to_state()
+                    break
+
+    def force_stop(self) -> None:
+        if self.running_thread is not None:
+            self.running_thread.stop()

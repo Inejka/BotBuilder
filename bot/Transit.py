@@ -49,6 +49,9 @@ class Transit:
     def get_priority(self) -> IntWrapper:
         return self.__priority
 
+    def get_to_state(self) -> "State":
+        return self.__to_state
+
     def get_template_body(self) -> str:
         return """import typing
 

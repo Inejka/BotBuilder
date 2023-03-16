@@ -1,3 +1,4 @@
+import typing
 from typing import TYPE_CHECKING
 
 from PyQt6.QtCore import QPointF
@@ -12,16 +13,21 @@ from utils.StrWrapper import StrWrapper
 
 
 class TransitUIController:
-    def __init__(self, bot: "Bot", transit_uis: dict, main_window: "MainWindow") -> None:
+    def __init__(self, bot: "Bot", transit_uis: dict, main_window: "MainWindow",
+                 try_open_editor: typing.Callable) -> None:
         self.bot = bot
         self.transit_uis = transit_uis
-        self.MainWindow = main_window
+        self.main_window = main_window
         self.state_uis_controller = None
+        self.try_open_editor_callback = try_open_editor
 
     def create_transit(self, transit_ui: TransitUI) -> None:
         transit_name, transit_id, transit_priority = self.bot.create_transit(transit_ui.get_from_state_id(),
                                                                              transit_ui.get_to_state_id())
         self.finish_transit_ui_init(transit_ui, transit_id, transit_name, transit_priority)
+
+    def try_open_editor(self, inner_id: str) -> None:
+        self.try_open_editor_callback(self.bot.get_transit_by_id(inner_id).get_associated_file())
 
     def load_transit(self, load_from: dict) -> None:
         transit_id = load_from["transit_id"]
@@ -72,6 +78,7 @@ class TransitUIController:
     def generate_transit_ui(self, params: TransitUI.TransitUIParams) -> TransitUI:
         params.update_transit_callback = self.update_transit_from_ui
         params.create_transit_callback = self.create_transit
+        params.try_open_editor_callback = self.try_open_editor
         transit_ui = TransitUI(params)
         transit_ui.set_names_with_actions([("Remove transit", self.remove_transit, transit_ui)])
         return transit_ui

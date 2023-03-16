@@ -1,11 +1,12 @@
 import json
 import os
+import subprocess
 
-from PathFile import Paths
 from bot.Bot import Bot
 from controllers.MainWindowMenuBarController import MainWindowMenuBarController
 from controllers.StateUIController import StateUIController
 from controllers.TransitUIController import TransitUIController
+from PathFile import Paths
 from ui.MainWindow import MainWindow
 from ui.StateUi import StateUI
 from ui.TransitUI import TransitUI
@@ -17,7 +18,7 @@ class UIController:
         self.transit_uis = {}
         self.bot = bot
         self.MainWindow = main_window
-        self.transit_uis_controller = TransitUIController(bot, self.transit_uis, self.MainWindow)
+        self.transit_uis_controller = TransitUIController(bot, self.transit_uis, self.MainWindow, self.try_open_editor)
         self.state_uis_controller = StateUIController(bot, self.state_uis, main_window, self.try_open_editor)
         self.bind_controllers()
         self.mainWindowMenuBarController = MainWindowMenuBarController(bot, main_window, self)
@@ -25,8 +26,8 @@ class UIController:
             [("Create State", self.state_uis_controller.create_state)])
         self.MainWindow.setGeometry(100, 100, 500, 500)
 
-    def try_open_editor(self, inner_id: str) -> None:
-        os.startfile(Paths.IDE)
+    def try_open_editor(self, file_path: str) -> None:
+        subprocess.run([Paths.IDE, file_path])
 
     def clear(self) -> None:
         self.state_uis_controller.clear()

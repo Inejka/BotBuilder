@@ -61,6 +61,9 @@ class ControlRectangle(QGraphicsRectItem):
         self.state_ui.menu.exec(QPoint(int(event.screenPos().x()), int(event.screenPos().y())))
         event.accept()
 
+    def mouseDoubleClickEvent(self, event: "QGraphicsSceneMouseEvent") -> None:
+        self.state_ui.try_open_editor_callback(self.state_ui.get_state_id())
+
 
 @SimpleWidgetWithMenu
 class StateUI(QFrame):
@@ -124,6 +127,7 @@ class StateUI(QFrame):
     def bind_proxies(self, control_proxy: ControlRectangle, proxy: StateUIProxy) -> None:
         self.scene_control_proxy = control_proxy
         self.scene_proxy = proxy
+        control_proxy
 
     def get_control_proxy(self) -> ControlRectangle:
         return self.scene_control_proxy

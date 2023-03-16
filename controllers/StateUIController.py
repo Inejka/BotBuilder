@@ -15,9 +15,12 @@ class StateUIController:
         self.bot = bot
         self.mainWindow = main_window
         self.state_uis = state_uis
-        self.try_open_editor = try_open_editor
+        self.try_open_editor_callback = try_open_editor
         self.stateUIColorController = StateUIColorController(bot, self.state_uis)
         self.transit_uis_controller = None
+
+    def try_open_editor(self, inner_id: str) -> None:
+        self.try_open_editor_callback(self.bot.get_state_by_id(inner_id).get_associated_file())
 
     def create_state(self) -> None:
         state_name, state_id = self.bot.create_state()

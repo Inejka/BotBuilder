@@ -162,6 +162,9 @@ class Line(QGraphicsPathItem):
         else:
             self.widget_proxy.hide()
 
+    def mouseDoubleClickEvent(self, event: "QGraphicsSceneMouseEvent") -> None:
+        self.transit.try_open_editor_callback(self.transit.get_id())
+
     def paint(self, painter: QtGui.QPainter, option: "QStyleOptionGraphicsItem",
               widget: QWidget | None = ...) -> None:
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
@@ -187,6 +190,7 @@ class TransitUI:
         point: QPointF
         scene: QGraphicsScene
         state: typing.Any
+        try_open_editor_callback: typing.Callable = None
         create_transit_callback: typing.Callable = None
         update_transit_callback: typing.Callable = None
 
@@ -207,6 +211,7 @@ class TransitUI:
 
         self.create_transit_callback = params.create_transit_callback
         self.update_transit_callback = params.update_transit_callback
+        self.try_open_editor_callback = params.try_open_editor_callback
         self.name = None
         self.priority = None
         self.transit_id = None

@@ -10,4 +10,4 @@ class Paths():
     MainWindowMenuBar = "resources/styles/MainWindowMenuBar.css"
     BotGeneratedFolder = "bot_generated"
     # IDE = "C:/Program Files/JetBrains/PyCharm Community Edition 2021.3.3/bin/pycharm64.exe"
-    IDE = "H:/PyCharm 231.6471.3/bin/pycharm64.exe"
+    IDE = "H:/PyCharm 231.7864.77/bin/pycharm64.exe"
